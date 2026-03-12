@@ -59,4 +59,4 @@ timezone-app/
 - **Full design spec:** `docs/design-brief.md`
 - **Approved interactive prototype:** `docs/design-mockup-v4.jsx` (React — for visual reference only, not production code)
 - **Background gradient:** `docs/midnight-aurora-background.css`
-- **Requirements:** `requirements/timezone-converter.md`
+- **Requirements:** `requirements/requirements-timezone-converter.md`

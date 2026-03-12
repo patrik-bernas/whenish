@@ -1,7 +1,7 @@
 # Implementation Plan: Timezone Converter — macOS App
 
 ## Requirements Reference
-- Requirements: `requirements/timezone-converter.md`
+- Requirements: `requirements/requirements-timezone-converter.md`
 - Design spec: `docs/design-brief.md`
 - Approved prototype: `docs/design-mockup-v4.jsx`
 
