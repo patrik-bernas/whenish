@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A10000250000000000000001 /* TimezoneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000240000000000000001 /* TimezoneViewModel.swift */; };
 		A10000230000000000000001 /* CitySearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000220000000000000001 /* CitySearchService.swift */; };
 		A10000210000000000000001 /* TimezoneService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000200000000000000001 /* TimezoneService.swift */; };
 		A100001E0000000000000001 /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001D0000000000000001 /* PersistenceService.swift */; };
@@ -28,6 +29,7 @@
 		A100001D0000000000000001 /* PersistenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceService.swift; sourceTree = "<group>"; };
 		A10000200000000000000001 /* TimezoneService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimezoneService.swift; sourceTree = "<group>"; };
 		A10000220000000000000001 /* CitySearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitySearchService.swift; sourceTree = "<group>"; };
+		A10000240000000000000001 /* TimezoneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimezoneViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +64,7 @@
 			children = (
 				A100001C0000000000000001 /* Models */,
 				A100001F0000000000000001 /* Services */,
+				A10000260000000000000001 /* ViewModels */,
 				A10000150000000000000001 /* AppDelegate.swift */,
 				A100000A0000000000000001 /* TimezoneAppApp.swift */,
 				A100000B0000000000000001 /* Info.plist */,
@@ -87,6 +90,14 @@
 				A10000200000000000000001 /* TimezoneService.swift */,
 			);
 			path = Services;
+			sourceTree = "<group>";
+		};
+		A10000260000000000000001 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A10000240000000000000001 /* TimezoneViewModel.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -165,6 +176,7 @@
 				A100000D0000000000000001 /* TimezoneAppApp.swift in Sources */,
 				A10000210000000000000001 /* TimezoneService.swift in Sources */,
 				A100001A0000000000000001 /* TimezoneGroup.swift in Sources */,
+				A10000250000000000000001 /* TimezoneViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

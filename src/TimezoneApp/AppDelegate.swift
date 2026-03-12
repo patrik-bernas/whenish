@@ -2,12 +2,19 @@ import AppKit
 import SwiftUI
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    static weak var shared: AppDelegate?
+
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let popover = NSPopover()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        Self.shared = self
         configurePopover()
         configureStatusItem()
+    }
+
+    func updateStatusItem(title: String?) {
+        statusItem.button?.title = (title?.isEmpty == false) ? title! : "🕐"
     }
 
     @objc
