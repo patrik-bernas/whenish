@@ -5,7 +5,7 @@ struct PopoverView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            PlaceholderSection(title: "Search", subtitle: "SearchBarView")
+            SearchBarView()
                 .padding(.horizontal, 24)
                 .padding(.top, 20)
 
@@ -54,7 +54,7 @@ struct PopoverView: View {
     }
 }
 
-private struct PlaceholderSection: View {
+struct PlaceholderSection: View {
     let title: String
     let subtitle: String
 
