@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A10000230000000000000001 /* CitySearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000220000000000000001 /* CitySearchService.swift */; };
 		A10000210000000000000001 /* TimezoneService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000200000000000000001 /* TimezoneService.swift */; };
 		A100001E0000000000000001 /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001D0000000000000001 /* PersistenceService.swift */; };
 		A10000190000000000000001 /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000160000000000000001 /* City.swift */; };
@@ -26,6 +27,7 @@
 		A10000180000000000000001 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		A100001D0000000000000001 /* PersistenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceService.swift; sourceTree = "<group>"; };
 		A10000200000000000000001 /* TimezoneService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimezoneService.swift; sourceTree = "<group>"; };
+		A10000220000000000000001 /* CitySearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitySearchService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +82,7 @@
 		A100001F0000000000000001 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				A10000220000000000000001 /* CitySearchService.swift */,
 				A100001D0000000000000001 /* PersistenceService.swift */,
 				A10000200000000000000001 /* TimezoneService.swift */,
 			);
@@ -156,6 +159,7 @@
 			files = (
 				A100001B0000000000000001 /* AppSettings.swift in Sources */,
 				A10000140000000000000001 /* AppDelegate.swift in Sources */,
+				A10000230000000000000001 /* CitySearchService.swift in Sources */,
 				A10000190000000000000001 /* City.swift in Sources */,
 				A100001E0000000000000001 /* PersistenceService.swift in Sources */,
 				A100000D0000000000000001 /* TimezoneAppApp.swift in Sources */,
