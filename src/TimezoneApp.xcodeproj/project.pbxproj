@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A10000190000000000000001 /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000160000000000000001 /* City.swift */; };
+		A100001A0000000000000001 /* TimezoneGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000170000000000000001 /* TimezoneGroup.swift */; };
+		A100001B0000000000000001 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000180000000000000001 /* AppSettings.swift */; };
 		A10000140000000000000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000150000000000000001 /* AppDelegate.swift */; };
 		A100000D0000000000000001 /* TimezoneAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000A0000000000000001 /* TimezoneAppApp.swift */; };
 /* End PBXBuildFile section */
@@ -16,6 +19,9 @@
 		A100000A0000000000000001 /* TimezoneAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimezoneAppApp.swift; sourceTree = "<group>"; };
 		A100000B0000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A10000150000000000000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		A10000160000000000000001 /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
+		A10000170000000000000001 /* TimezoneGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimezoneGroup.swift; sourceTree = "<group>"; };
+		A10000180000000000000001 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,11 +54,22 @@
 		A10000090000000000000001 /* TimezoneApp */ = {
 			isa = PBXGroup;
 			children = (
+				A100001C0000000000000001 /* Models */,
 				A10000150000000000000001 /* AppDelegate.swift */,
 				A100000A0000000000000001 /* TimezoneAppApp.swift */,
 				A100000B0000000000000001 /* Info.plist */,
 			);
 			path = TimezoneApp;
+			sourceTree = "<group>";
+		};
+		A100001C0000000000000001 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A10000180000000000000001 /* AppSettings.swift */,
+				A10000160000000000000001 /* City.swift */,
+				A10000170000000000000001 /* TimezoneGroup.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -123,8 +140,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A100001B0000000000000001 /* AppSettings.swift in Sources */,
 				A10000140000000000000001 /* AppDelegate.swift in Sources */,
+				A10000190000000000000001 /* City.swift in Sources */,
 				A100000D0000000000000001 /* TimezoneAppApp.swift in Sources */,
+				A100001A0000000000000001 /* TimezoneGroup.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
