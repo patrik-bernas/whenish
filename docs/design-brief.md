@@ -1,221 +1,222 @@
-# Design Brief: Timezone App — macOS Menubar Popover
+# Design Brief: Timezone App — macOS Menubar Popover (v4 Final)
 
-Use this document as a complete reference to build the app's UI mockup in Paper.design.
-Read the entire brief before starting. Build each section as a separate frame in Paper.
+Use this document as the complete reference to build the app's UI.
+The approved interactive prototype is in `docs/design-mockup-v4.jsx`.
 
 ---
 
 ## Overview
 
-This is a macOS menubar popover app for converting timezones. The design is **light, playful, and modern** — think soft colors, rounded corners, and a clean layout. It drops down from the macOS menubar.
+A macOS menubar popover app for converting timezones. The design is **dark glassmorphism** — frosted glass panels with warm translucency, soft indigo accents, and muted color-coded timeline bars. It drops down from the macOS menubar.
 
 ---
 
 ## Global Design Tokens
 
-### Colors
-- **Background:** `#EAF4FB` (soft sky blue)
-- **Card/Popover background:** `#FFFFFF` with 80% opacity (frosted glass feel)
-- **Text primary:** `#1A1A2E` (near-black)
-- **Text secondary:** `#6B7280` (gray, for offsets and labels)
-- **Time text:** `#1A1A2E`, bold, large
-- **Search bar background:** `#F0F4F8`
-- **Search bar border:** `#D1D5DB`
-- **Pill active background:** `#3B82F6` (blue)
-- **Pill active text:** `#FFFFFF`
-- **Pill inactive background:** `#E5E7EB` (light gray)
-- **Pill inactive text:** `#6B7280`
-- **Divider lines:** `#E5E7EB` at 50% opacity
-- **Slider dot:** `#FFFFFF` with subtle shadow
-- **Vertical scrub line:** `#94A3B8` at 60% opacity, 1px wide
+### Glass Effect
+- **Popover background:** `rgba(255, 255, 255, 0.08)`
+- **Backdrop filter:** `blur(60px) saturate(1.6)`
+- **Border:** `0.5px solid rgba(255, 255, 255, 0.12)`
+- **Shadow:** `0 24px 80px rgba(0,0,0,0.35), 0 8px 32px rgba(0,0,0,0.2), inset 0 0.5px 0 rgba(255,255,255,0.15), inset 0 -0.5px 0 rgba(255,255,255,0.05)`
+- **SwiftUI equivalent:** `.ultraThinMaterial` or `.regularMaterial`
+
+### Background (for website / marketing — the app popover floats over whatever is on screen)
+- **Gradient:** `linear-gradient(160deg, #1a1520 0%, #2d2235 25%, #1e2a3a 50%, #1a2332 75%, #151820 100%)`
+- **Ambient blobs:** Purple `rgba(139, 92, 246, 0.08)`, Blue `rgba(59, 130, 246, 0.06)`, Warm `rgba(217, 175, 135, 0.05)` — all with large blur
+- **Saved as:** `docs/midnight-aurora-background.css`
+
+### Text Colors (all rgba white with varying opacity)
+- **Primary text:** `rgba(255, 255, 255, 0.88)`
+- **Secondary text:** `rgba(255, 255, 255, 0.3)`
+- **Subtle/disabled:** `rgba(255, 255, 255, 0.15–0.18)`
+- **Home city text:** `rgba(200, 210, 255, 0.95)` (slightly brighter with indigo tint)
+- **Time display:** `rgba(255, 255, 255, 0.85)`, font-weight 300
+
+### Accent Color
+- **Indigo:** `rgba(167, 180, 255)` — used at varying opacities:
+  - Active menubar dot: `rgba(167, 180, 255, 0.7)` with `0 0 8px rgba(167, 180, 255, 0.35)` glow
+  - Now marker on slider: `rgba(167, 180, 255, 0.5)`
+  - Date label (Tomorrow/Yesterday): `rgba(167, 180, 255, 0.55)`
+  - Current time display: `rgba(167, 180, 255, 0.6)`
 
 ### Timeline Bar Colors (3 states)
-- **Green (Working):** `#22C55E` — roughly 9am–5pm local
-- **Yellow (Early/Late):** `#FACC15` — roughly 7–9am and 5–9pm local
-- **Red (Sleeping):** `#EF4444` — roughly 9pm–7am local
+- **Available (green):** `rgba(134, 214, 177, 0.75)` — roughly 9am–5pm local
+- **Heads up (yellow):** `rgba(229, 195, 120, 0.65)` — roughly 7–9am and 5–9pm local
+- **Sleeping (red):** `rgba(205, 133, 133, 0.55)` — roughly 9pm–7am local
+
+### Interactive Element Colors
+- **Search bar background:** `rgba(255, 255, 255, 0.06)` with `0.5px solid rgba(255, 255, 255, 0.08)` border
+- **Settings gear button:** Same as search bar, 32×32px, rounded 10px
+- **Active pill:** `rgba(255, 255, 255, 0.14)` with `0.5px solid rgba(255, 255, 255, 0.15)` + backdrop blur
+- **Inactive pill:** `rgba(255, 255, 255, 0.04)` with `0.5px solid rgba(255, 255, 255, 0.08)`
+- **Pill hover (inactive):** `rgba(255, 255, 255, 0.08)`
+- **Row hover:** `rgba(255, 255, 255, 0.03)`
+- **Divider lines:** `rgba(255, 255, 255, 0.06)`, 0.5px height
+- **Slider dot:** `rgba(255, 255, 255, 0.95)`, 18px diameter, shadow `0 1px 8px rgba(0,0,0,0.15)`
 
 ### Typography
-- **Font family:** SF Pro (system font) or Inter as fallback
-- **City name:** 15px, semibold
-- **Time display:** 28px, bold, monospace-style
-- **Offset label:** 12px, regular, secondary color
-- **Search placeholder:** 14px, regular, secondary color
-- **Pill labels:** 13px, medium
+- **Font family:** SF Pro Display / SF Pro Text (system font) — `-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", system-ui, sans-serif`
+- **Menubar text:** SF Mono, 12px, weight 400, `rgba(255,255,255,0.8)`
+- **City name:** 13.5px, weight 500, primary text color
+- **Home city name:** 13.5px, weight 600, home city text color
+- **Offset label:** 10.5px, weight 400, secondary text color
+- **Time display:** 21px, weight 300 (light), `rgba(255,255,255,0.85)`, tabular-nums, letter-spacing -0.02em
+- **Date label (Today):** 9.5px, weight 400, `rgba(255,255,255,0.2)`
+- **Date label (Tomorrow/Yesterday):** 9.5px, weight 500, `rgba(167, 180, 255, 0.55)`
+- **Search placeholder:** 13px, weight 400, secondary text color
+- **Pill label (active):** 12px, weight 600, `rgba(255,255,255,0.9)`
+- **Pill label (inactive):** 12px, weight 400, `rgba(255,255,255,0.35)`
+- **Slider offset text:** 11px, weight 400, secondary text color
+- **Current time display:** 12.5px, weight 400, indigo accent
+- **Legend text:** 10px, weight 400, `rgba(255,255,255,0.25)`
+- **Range labels (-24h/+24h):** 9.5px, weight 400, `rgba(255,255,255,0.18)`
 
 ### Spacing & Sizing
-- **Popover width:** 360px
-- **Popover corner radius:** 16px
-- **Row height:** ~72px (to accommodate city info + timeline bar)
-- **Timeline bar height:** 6px, rounded ends (3px radius)
-- **Pill height:** 28px, corner radius 14px (fully rounded)
-- **Search bar height:** 36px, corner radius 10px
-- **Padding (outer):** 16px
-- **Padding between elements:** 12px
-- **Flag emoji size:** 24px
+- **Popover width:** 370px
+- **Popover corner radius:** 22px
+- **Outer padding:** 24px horizontal, 20px top, 14px bottom (above city list)
+- **City row padding:** 12px vertical, 24px horizontal
+- **Timeline bar width:** ~120px (flex, centered between name and time)
+- **Timeline bar height:** 3px, fully rounded ends
+- **Vertical scrub line on timeline:** 1px wide, 9px tall, `rgba(255, 255, 255, 0.45)`
+- **Pill height:** ~30px (6px vertical padding + 12px font + 6px), corner radius 20px (fully rounded)
+- **Pill horizontal padding:** 16px
+- **Pill gap:** 6px
+- **Search bar height:** ~36px (9px vertical padding), corner radius 12px
+- **Flag emoji size:** 20px font-size, 26px container width
+- **Menubar toggle dot:** 7px diameter
+- **Remove ×:** 11px font-size, `rgba(255,255,255,0.12)` default, 0.4 on hover
+- **Divider margin:** 0 24px (inset from edges)
+- **Slider area padding:** 10px top, 24px horizontal, 14px bottom (before legend)
+- **Legend padding:** 0 24px horizontal, 16px bottom
 
 ---
 
-## Layout: Popover Panel (Main Frame)
+## Layout: Popover Panel
 
-Build this as a single frame, 360px wide. Stack vertically, top to bottom:
+Stack vertically, top to bottom:
 
-### Section 1: Search Bar Row
+### Section 1: Search Bar + Settings Gear
 ```
-[ 🔍  Add city...                          ⚙️  ✕ ]
+[ 🔍  Add city...                              ] [ ⚙ ]
 ```
-- Full width minus padding (328px)
-- Left: magnifying glass icon (gray)
-- Center: placeholder text "Add city..." in secondary color
-- Right: gear icon for settings + close button (✕)
-- Background: `#F0F4F8`, border: 1px `#D1D5DB`, rounded 10px
-- The gear and close button sit outside the search input, right-aligned in the row
+- No close × button — popover closes on outside click
+- Search bar takes full available width
+- Gear button: 32×32px, separated by 10px gap
 
-### Section 2: Group Pills Row
+### Section 2: Group Pills
 ```
-[ 🔵 Work ]  [ ○ Family ]  [ ○ Travel ]
+      [ Work ]  [ Family ]  [ Travel ]
 ```
-- 3 pill buttons, horizontally centered, 8px gap between them
-- Active pill: blue background (`#3B82F6`), white text
-- Inactive pills: light gray background (`#E5E7EB`), gray text
-- Fully rounded (pill shape)
-- 12px horizontal padding inside each pill
+- Centered horizontally, 6px gap
+- 14px margin-top from search bar
 
-### Section 3: City List (up to 6 rows)
+### Section 3: City List
 
-Each city row contains two visual sub-rows stacked:
+Each city row:
+```
+🇰🇷  Seoul     ▬▬▬▬▬▬▬▬▬▬▬▬|▬▬▬▬▬▬▬    20:34  ● ✕
+     +1h        (timeline bar)              Today
+```
 
-**Sub-row A: City Info**
+Home city row:
 ```
-🇰🇷  Seoul                              20:34   ● ✕
-     +1h
+🇮🇩📍 Bali     ▬▬▬▬▬▬▬▬▬▬▬▬|▬▬▬▬▬▬▬    19:34  ● ✕
+     You        (timeline bar)              Today
 ```
-- Left: Flag emoji (24px) + city name (semibold) + offset below in smaller gray text
-- Right: Time in large bold text + menubar toggle dot + remove ✕
-- The menubar toggle is a small filled circle:
-  - Active (shown in menubar): `#3B82F6` (blue)
-  - Inactive (not in menubar): `#D1D5DB` (gray)
-  - Tapping toggles it
 
-**Sub-row B: Per-City Timeline Bar**
-```
-[RED——YELLOW—GREEN————————GREEN—YELLOW——RED]
-```
-- Sits directly below the city info, left-aligned with the city name (indented past the flag)
-- Width: ~280px (full row width minus flag indent and right padding)
-- Height: 6px, fully rounded ends
-- Colors represent that city's local 24-hour cycle:
-  - The bar is a horizontal gradient/segmented bar showing:
-    - Red (sleeping) → Yellow (early morning) → Green (working) → Yellow (evening) → Red (sleeping)
-  - The segments shift based on each city's timezone offset
-  - Example: If it's 12:00 UTC, Seoul (+9h) would show green in a different position than San Francisco (-8h)
-
-**Divider**
-- 1px line, `#E5E7EB` at 50% opacity, full width between each city row
+- Flag (26px) → Name+offset (72px min) → Timeline bar (flex) → Time+date (58px min) → Dot (7px) → × (11px)
+- Home city has: 📍 overlaid on flag, "You" instead of offset, brighter name, subtle radial glow behind flag area
+- Date always visible: "Today" subtle, "Tomorrow"/"Yesterday" brighter indigo — fixed 13px height to prevent layout shift
+- 0.5px dividers between rows, inset 24px from edges
 
 ### Section 4: Slider Area
 ```
-+2h 10m from now                         ⏱ Now
-[====RED—YELLOW—GREEN————●———GREEN—YELLOW—RED====]
- -24h                                        +24h
++10h from now                            ⏱ 19:34
+[=====RED—YELLOW—GREEN———|——●——GREEN—YELLOW—RED=====]
+-24h                                          +24h
 ```
-- **Top row:** Left shows the offset label ("Now" or "+2h 10m from now"), right shows a "Now" reset button with a small clock icon
-- **The slider bar:** This is the MERGED element — the color bar IS the slider track
-  - Full width (328px), height 8px, rounded
-  - Same red-yellow-green-yellow-red pattern but represents aggregate/reference city times
-  - A white circle (slider dot) sits ON the color bar
-  - Dot size: 20px diameter, white fill, subtle drop shadow (`0 1px 3px rgba(0,0,0,0.2)`)
-  - Dot is draggable left-right
-- **Bottom row:** "-24h" label left, "+24h" label right, small gray text
+- Top row: offset label (left), clickable current time with clock icon (right)
+- The `|` is the permanent "now" marker (indigo, appears when dot moves away from center)
+- The `●` is the draggable white dot
+- Color bar is the slider track (no separate track)
+- 0.5px divider above this section
 
-### Section 5: Vertical Scrub Line (interactive element — describe visually)
-- A thin vertical line (1px, `#94A3B8` at 60% opacity) extends from the slider dot straight up through every per-city timeline bar
-- This line visually connects the same moment in time across all cities
-- In the mockup, show this as a dashed or semi-transparent vertical line cutting through all rows
+### Section 5: Legend
+```
+            ● Available  ● Heads up  ● Sleeping
+```
+- Centered, 18px gap between items
+- 5px colored dots + 10px text
+- Sits inside the popover, below everything
 
 ---
 
-## Layout: Menubar Compact View (Separate Frame)
-
-Build this as a second frame showing the macOS menubar appearance:
+## Layout: Menubar Compact View
 
 ```
-🕐 LA 01:59 | NY 04:59 | FR 10:59
+◉  SEL 20:34  ·  BAL 19:34
 ```
-- Small frame, dark background (`#2D2D2D`) to represent the macOS menubar
-- Left: small clock icon or app icon
-- Text: city abbreviations + times separated by ` | `
-- Font: 12px, SF Mono or monospace, `#FFFFFF`
-- This is what the user sees WITHOUT opening the popover
+- Glass background: `rgba(255, 255, 255, 0.06)` + 30px backdrop blur
+- Border: `0.5px solid rgba(255,255,255,0.1)`
+- Corner radius: 10px
+- Padding: 7px 18px
+- Font: SF Mono, 12px, weight 400, `rgba(255,255,255,0.8)`
+- Cities separated by ` · ` (middot with spaces)
+- Only cities with active menubar toggle dot are shown
 
 ---
 
-## States to Mockup
-
-Create these as separate frames or variants in Paper:
+## States to Build in Paper / Mockup
 
 ### Frame 1: Default State
-- Popover open, "Work" group active, 4 cities showing
-- Slider at center (Now position)
-- Vertical line at center
-- Example cities: Seoul (+1h), Bali (Same time), Amsterdam (-7h), San Francisco (-16h)
-- 2 cities have menubar toggle active (blue dot), 2 inactive (gray dot)
+- Popover open, "Work" group active, 4 cities
+- Slider at center (Now), vertical line at center
+- Seoul (+1h), Bali (Same/You/home), Amsterdam (-7h), San Francisco (-16h)
+- Seoul and Bali have active menubar dots, Amsterdam and SF inactive
+- All date labels show "Today"
 
-### Frame 2: Slider Scrubbed
-- Same as Frame 1 but slider dragged right (+3h)
-- All times shifted accordingly
-- Vertical line moved right
-- Offset label shows "+3h from now"
+### Frame 2: Slider Scrubbed (+10h)
+- Slider dragged right, now marker visible at center
+- Seoul and Bali show "Tomorrow", Amsterdam and SF show "Today"
+- All times shifted +10h
+- Offset label shows "+10h from now"
 
-### Frame 3: Search Active
-- Search bar focused with "san f" typed
-- Dropdown below search showing: "San Francisco, United States" as a suggestion
-- City list slightly dimmed or pushed down
+### Frame 3: Different Group Selected
+- "Family" pill active
+- London, Tokyo, Sydney showing
+- Different menubar dot states
 
-### Frame 4: Different Group Selected
-- "Family" pill active instead of "Work"
-- Different set of cities showing (e.g., London, Tokyo, Sydney)
-- Shows that switching groups changes the entire city list
-
-### Frame 5: Menubar View
-- Just the macOS menubar strip showing the compact time display
+### Frame 4: Menubar View
+- Dark macOS menubar strip with compact time display
 
 ---
 
 ## City Data for Mockups
 
-Use these for the "Work" group:
-| City | Country | Flag | Offset from Bali (WITA) | Sample Time |
-|------|---------|------|------------------------|-------------|
-| Seoul | South Korea | 🇰🇷 | +1h | 20:34 |
-| Bali | Indonesia | 🇮🇩 | Same time | 19:34 |
-| Amsterdam | Netherlands | 🇳🇱 | -7h | 12:34 |
-| San Francisco | USA | 🇺🇸 | -16h | 03:34 |
+**Work group:**
+| City | Flag | Offset | Time | UTC | Home | Menubar |
+|------|------|--------|------|-----|------|---------|
+| Seoul | 🇰🇷 | +1h | 20:34 | +9 | No | Yes |
+| Bali | 🇮🇩 | You | 19:34 | +8 | Yes | Yes |
+| Amsterdam | 🇳🇱 | -7h | 12:34 | +1 | No | No |
+| San Francisco | 🇺🇸 | -16h | 03:34 | -8 | No | No |
 
-Use these for the "Family" group:
-| City | Country | Flag | Offset from Bali (WITA) | Sample Time |
-|------|---------|------|------------------------|-------------|
-| London | UK | 🇬🇧 | -8h | 11:34 |
-| Tokyo | Japan | 🇯🇵 | +1h | 20:34 |
-| Sydney | Australia | 🇦🇺 | +3h | 22:34 |
-
----
-
-## Visual Reference
-
-This app is inspired by Pretty Timezones (https://prettytimezones.com) but with key differences:
-1. **Per-city timeline bars** instead of one aggregate bar at the bottom
-2. **Vertical scrub line** connecting slider to all city timelines
-3. **3-state color coding** (green/yellow/red) instead of 4 states
-4. **Group pills** for switching between city sets
-5. **Per-city menubar toggle** icon on each row
-6. **Faint dividers** between city rows
-7. **Light, playful aesthetic** — not dark themed
+**Family group:**
+| City | Flag | Offset | Time | UTC | Home | Menubar |
+|------|------|--------|------|-----|------|---------|
+| London | 🇬🇧 | -8h | 11:34 | +0 | No | Yes |
+| Tokyo | 🇯🇵 | +1h | 20:34 | +9 | No | No |
+| Sydney | 🇦🇺 | +3h | 22:34 | +11 | No | Yes |
 
 ---
 
-## Notes for Implementation
+## Key Design Principles
 
-- The timeline bars should be ACCURATE — each city's bar should reflect its actual timezone offset. Seoul's "green zone" (working hours) appears at a different horizontal position than San Francisco's.
-- The vertical scrub line must be perfectly aligned from the slider dot through every timeline bar.
-- Flags should be emoji, not images.
-- Keep the design clean — resist the urge to add too many elements. White space is good.
+1. **Everything is translucent** — no solid colors. Every surface uses rgba with opacity.
+2. **Hierarchy through opacity** — primary content at 0.85–0.9 opacity, secondary at 0.3, disabled at 0.15.
+3. **Indigo is the only accent** — don't introduce other accent colors.
+4. **Minimal chrome** — no borders heavier than 0.5px, no solid backgrounds, no heavy shadows on inner elements.
+5. **The glass IS the design** — the backdrop blur and translucency do the heavy lifting.
+6. **Timeline bars blend in** — they use muted, transparent colors that feel part of the glass, not sitting on top of it.
+7. **Consistent date labels** — always show Today/Tomorrow/Yesterday to prevent layout shift.
