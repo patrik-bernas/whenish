@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A10000140000000000000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000150000000000000001 /* AppDelegate.swift */; };
 		A100000D0000000000000001 /* TimezoneAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000A0000000000000001 /* TimezoneAppApp.swift */; };
 /* End PBXBuildFile section */
 
@@ -14,6 +15,7 @@
 		A10000030000000000000001 /* TimezoneApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimezoneApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A100000A0000000000000001 /* TimezoneAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimezoneAppApp.swift; sourceTree = "<group>"; };
 		A100000B0000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A10000150000000000000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,6 +48,7 @@
 		A10000090000000000000001 /* TimezoneApp */ = {
 			isa = PBXGroup;
 			children = (
+				A10000150000000000000001 /* AppDelegate.swift */,
 				A100000A0000000000000001 /* TimezoneAppApp.swift */,
 				A100000B0000000000000001 /* Info.plist */,
 			);
@@ -120,6 +123,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A10000140000000000000001 /* AppDelegate.swift in Sources */,
 				A100000D0000000000000001 /* TimezoneAppApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
