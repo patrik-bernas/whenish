@@ -25,9 +25,8 @@ struct PopoverView: View {
             TimeSliderView()
                 .padding(.top, 10)
 
-            PlaceholderSection(title: "Legend", subtitle: "LegendView")
-                .padding(.horizontal, 24)
-                .padding(.vertical, 16)
+            LegendView()
+                .padding(.top, 2)
         }
         .frame(width: 370)
         .background(.ultraThinMaterial)
@@ -35,32 +34,6 @@ struct PopoverView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
-        )
-    }
-}
-
-struct PlaceholderSection: View {
-    let title: String
-    let subtitle: String
-
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.headline)
-                    .foregroundStyle(.white.opacity(0.88))
-                Text(subtitle)
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.3))
-            }
-            Spacer()
-        }
-        .padding(12)
-        .background(Color.white.opacity(0.06))
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
         )
     }
 }
