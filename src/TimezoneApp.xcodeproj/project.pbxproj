@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A100002D0000000000000001 /* GroupPillsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002C0000000000000001 /* GroupPillsView.swift */; };
 		A100002B0000000000000001 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002A0000000000000001 /* SearchBarView.swift */; };
 		A10000280000000000000001 /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000270000000000000001 /* PopoverView.swift */; };
 		A10000250000000000000001 /* TimezoneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000240000000000000001 /* TimezoneViewModel.swift */; };
@@ -34,6 +35,7 @@
 		A10000240000000000000001 /* TimezoneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimezoneViewModel.swift; sourceTree = "<group>"; };
 		A10000270000000000000001 /* PopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverView.swift; sourceTree = "<group>"; };
 		A100002A0000000000000001 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
+		A100002C0000000000000001 /* GroupPillsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupPillsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +110,7 @@
 		A10000290000000000000001 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A100002C0000000000000001 /* GroupPillsView.swift */,
 				A10000270000000000000001 /* PopoverView.swift */,
 				A100002A0000000000000001 /* SearchBarView.swift */,
 			);
@@ -186,6 +189,7 @@
 				A10000140000000000000001 /* AppDelegate.swift in Sources */,
 				A10000230000000000000001 /* CitySearchService.swift in Sources */,
 				A10000190000000000000001 /* City.swift in Sources */,
+				A100002D0000000000000001 /* GroupPillsView.swift in Sources */,
 				A100001E0000000000000001 /* PersistenceService.swift in Sources */,
 				A10000280000000000000001 /* PopoverView.swift in Sources */,
 				A100002B0000000000000001 /* SearchBarView.swift in Sources */,

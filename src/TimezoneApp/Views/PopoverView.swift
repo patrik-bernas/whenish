@@ -9,7 +9,7 @@ struct PopoverView: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 20)
 
-            PlaceholderSection(title: "Groups", subtitle: "GroupPillsView")
+            GroupPillsView()
                 .padding(.horizontal, 24)
                 .padding(.top, 14)
 
