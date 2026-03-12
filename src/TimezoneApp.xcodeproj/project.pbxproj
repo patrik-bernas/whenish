@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A100002F0000000000000001 /* TimelineBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002E0000000000000001 /* TimelineBarView.swift */; };
 		A100002D0000000000000001 /* GroupPillsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002C0000000000000001 /* GroupPillsView.swift */; };
 		A100002B0000000000000001 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002A0000000000000001 /* SearchBarView.swift */; };
 		A10000280000000000000001 /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000270000000000000001 /* PopoverView.swift */; };
@@ -36,6 +37,7 @@
 		A10000270000000000000001 /* PopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverView.swift; sourceTree = "<group>"; };
 		A100002A0000000000000001 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		A100002C0000000000000001 /* GroupPillsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupPillsView.swift; sourceTree = "<group>"; };
+		A100002E0000000000000001 /* TimelineBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineBarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +115,7 @@
 				A100002C0000000000000001 /* GroupPillsView.swift */,
 				A10000270000000000000001 /* PopoverView.swift */,
 				A100002A0000000000000001 /* SearchBarView.swift */,
+				A100002E0000000000000001 /* TimelineBarView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -194,6 +197,7 @@
 				A10000280000000000000001 /* PopoverView.swift in Sources */,
 				A100002B0000000000000001 /* SearchBarView.swift in Sources */,
 				A100000D0000000000000001 /* TimezoneAppApp.swift in Sources */,
+				A100002F0000000000000001 /* TimelineBarView.swift in Sources */,
 				A10000210000000000000001 /* TimezoneService.swift in Sources */,
 				A100001A0000000000000001 /* TimezoneGroup.swift in Sources */,
 				A10000250000000000000001 /* TimezoneViewModel.swift in Sources */,
