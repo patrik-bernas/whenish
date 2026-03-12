@@ -6,9 +6,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let popover = NSPopover()
+    var viewModel: TimezoneViewModel? {
+        didSet { updatePopoverContent() }
+    }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Self.shared = self
+        if viewModel == nil {
+            viewModel = .shared
+        }
         configurePopover()
         configureStatusItem()
     }
@@ -35,8 +41,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func configurePopover() {
         popover.animates = true
         popover.behavior = .transient
-        popover.contentSize = NSSize(width: 370, height: 520)
-        popover.contentViewController = NSHostingController(rootView: PlaceholderPopoverView())
+        popover.contentSize = NSSize(width: 370, height: 560)
+        updatePopoverContent()
     }
 
     private func configureStatusItem() {
@@ -48,18 +54,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         button.target = self
         button.action = #selector(togglePopover(_:))
     }
-}
 
-private struct PlaceholderPopoverView: View {
-    var body: some View {
-        VStack(spacing: 12) {
-            Text("Timezone Converter")
-                .font(.headline)
-            Text("Popover shell placeholder")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+    private func updatePopoverContent() {
+        guard let viewModel else {
+            return
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(24)
+
+        popover.contentViewController = NSHostingController(
+            rootView: PopoverView()
+                .environmentObject(viewModel)
+        )
     }
 }

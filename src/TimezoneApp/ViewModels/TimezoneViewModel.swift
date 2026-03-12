@@ -2,6 +2,8 @@ import Foundation
 
 @MainActor
 final class TimezoneViewModel: ObservableObject {
+    static let shared = TimezoneViewModel()
+
     @Published var groups: [TimezoneGroup] {
         didSet { persistGroupsAndRefreshState() }
     }
