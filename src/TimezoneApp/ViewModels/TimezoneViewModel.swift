@@ -129,6 +129,30 @@ final class TimezoneViewModel: ObservableObject {
         groups[index].name = String(name.prefix(12))
     }
 
+    func timeZone(for city: City) -> TimeZone {
+        TimeZone(identifier: city.timeZoneIdentifier) ?? .current
+    }
+
+    func displayedTime(for city: City) -> String {
+        let date = timezoneService.currentTime(in: timeZone(for: city), offsetHours: scrubberOffset)
+        return timezoneService.formattedTime(date: date, use24Hour: settings.use24HourFormat)
+    }
+
+    func displayedDayLabel(for city: City) -> String {
+        let shiftedDate = timezoneService.currentTime(in: timeZone(for: city), offsetHours: scrubberOffset)
+        let referenceDate = timezoneService.currentTime(in: timeZone(for: city), offsetHours: 0)
+        return timezoneService.dayLabel(for: shiftedDate, relativeTo: referenceDate)
+    }
+
+    func relativeOffsetLabel(for city: City) -> String {
+        guard let homeIdentifier = settings.homeTimeZoneIdentifier,
+              let homeTimeZone = TimeZone(identifier: homeIdentifier) else {
+            return city.isHome ? "You" : "Same"
+        }
+
+        return city.isHome ? "You" : timezoneService.offsetLabel(from: homeTimeZone, to: timeZone(for: city))
+    }
+
     func resetScrubber() {
         scrubberOffset = 0
     }

@@ -15,22 +15,8 @@ struct PopoverView: View {
 
             if let group = viewModel.activeGroup {
                 VStack(spacing: 0) {
-                    ForEach(group.cities) { city in
-                        HStack {
-                            Text(city.flag)
-                            Text(city.name)
-                                .foregroundStyle(.primary)
-                            Spacer()
-                            Text(city.timeZoneIdentifier)
-                                .foregroundStyle(.secondary)
-                                .font(.caption)
-                        }
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 12)
-
-                        Divider()
-                            .overlay(Color.white.opacity(0.06))
-                            .padding(.horizontal, 24)
+                    ForEach(Array(group.cities.enumerated()), id: \.element.id) { index, city in
+                        CityRowView(city: city, isLast: index == group.cities.count - 1)
                     }
                 }
                 .padding(.top, 14)
