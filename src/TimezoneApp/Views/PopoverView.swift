@@ -22,8 +22,7 @@ struct PopoverView: View {
                 .padding(.top, 14)
             }
 
-            PlaceholderSection(title: "Slider", subtitle: "TimeSliderView")
-                .padding(.horizontal, 24)
+            TimeSliderView()
                 .padding(.top, 10)
 
             PlaceholderSection(title: "Legend", subtitle: "LegendView")

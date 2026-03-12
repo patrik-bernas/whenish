@@ -5,6 +5,7 @@ struct TimelineBarView: View {
     let scrubberOffset: Double
     var width: CGFloat = 120
     var height: CGFloat = 3
+    var showsScrubLine: Bool = true
 
     private let timezoneService = TimezoneService()
 
@@ -19,10 +20,12 @@ struct TimelineBarView: View {
             }
             .clipShape(Capsule())
 
-            Rectangle()
-                .fill(Color.white.opacity(0.45))
-                .frame(width: 1, height: 9)
-                .offset(x: scrubX)
+            if showsScrubLine {
+                Rectangle()
+                    .fill(Color.white.opacity(0.45))
+                    .frame(width: 1, height: 9)
+                    .offset(x: scrubX)
+            }
         }
         .frame(width: width, height: 9)
     }

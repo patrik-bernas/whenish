@@ -72,9 +72,12 @@ final class TimezoneViewModel: ObservableObject {
     }
 
     var currentLocalTimeString: String {
-        let homeTimeZone = resolvedHomeTimeZone()
         let date = timezoneService.currentTime(in: homeTimeZone, offsetHours: scrubberOffset)
         return timezoneService.formattedTime(date: date, use24Hour: settings.use24HourFormat)
+    }
+
+    var homeTimeZone: TimeZone {
+        resolvedHomeTimeZone()
     }
 
     func addCity(_ result: CitySearchResult) {
