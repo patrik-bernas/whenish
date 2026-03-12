@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A10000210000000000000001 /* TimezoneService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000200000000000000001 /* TimezoneService.swift */; };
 		A100001E0000000000000001 /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001D0000000000000001 /* PersistenceService.swift */; };
 		A10000190000000000000001 /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000160000000000000001 /* City.swift */; };
 		A100001A0000000000000001 /* TimezoneGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000170000000000000001 /* TimezoneGroup.swift */; };
@@ -24,6 +25,7 @@
 		A10000170000000000000001 /* TimezoneGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimezoneGroup.swift; sourceTree = "<group>"; };
 		A10000180000000000000001 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		A100001D0000000000000001 /* PersistenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceService.swift; sourceTree = "<group>"; };
+		A10000200000000000000001 /* TimezoneService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimezoneService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,6 +81,7 @@
 			isa = PBXGroup;
 			children = (
 				A100001D0000000000000001 /* PersistenceService.swift */,
+				A10000200000000000000001 /* TimezoneService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -156,6 +159,7 @@
 				A10000190000000000000001 /* City.swift in Sources */,
 				A100001E0000000000000001 /* PersistenceService.swift in Sources */,
 				A100000D0000000000000001 /* TimezoneAppApp.swift in Sources */,
+				A10000210000000000000001 /* TimezoneService.swift in Sources */,
 				A100001A0000000000000001 /* TimezoneGroup.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
