@@ -160,6 +160,10 @@ final class TimezoneViewModel: ObservableObject {
         scrubberOffset = 0
     }
 
+    func refreshMenubarTitle() {
+        refreshStatusItemTitle()
+    }
+
     private func updateSearchResults() {
         searchResults = citySearchService.search(query: searchQuery)
     }
@@ -199,6 +203,21 @@ final class TimezoneViewModel: ObservableObject {
     }
 
     private func abbreviation(for cityName: String) -> String {
+        let customAbbreviations: [String: String] = [
+            "Seoul": "SEL",
+            "Bali": "BAL",
+            "Amsterdam": "AMS",
+            "San Francisco": "SFO",
+            "London": "LON",
+            "Tokyo": "TYO",
+            "Sydney": "SYD",
+            "New York": "NYC"
+        ]
+
+        if let custom = customAbbreviations[cityName] {
+            return custom
+        }
+
         let cleaned = cityName.replacingOccurrences(of: " ", with: "")
         return String(cleaned.prefix(3)).uppercased()
     }

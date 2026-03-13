@@ -1,11 +1,13 @@
 import AppKit
 import SwiftUI
 
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     static weak var shared: AppDelegate?
 
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let popover = NSPopover()
+    private var menubarRefreshTimer: Timer?
     var viewModel: TimezoneViewModel? {
         didSet { updatePopoverContent() }
     }
@@ -17,10 +19,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         configurePopover()
         configureStatusItem()
+        startMenubarRefreshTimer()
     }
 
     func updateStatusItem(title: String?) {
-        statusItem.button?.title = (title?.isEmpty == false) ? title! : "🕐"
+        guard let button = statusItem.button else {
+            return
+        }
+
+        guard let title, !title.isEmpty else {
+            button.attributedTitle = NSAttributedString(string: "🕐")
+            return
+        }
+
+        button.attributedTitle = NSAttributedString(
+            string: title,
+            attributes: [
+                .font: NSFont.monospacedSystemFont(ofSize: 12, weight: .regular),
+                .foregroundColor: NSColor.white.withAlphaComponent(0.8)
+            ]
+        )
     }
 
     @objc
@@ -53,6 +71,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         button.title = "🕐"
         button.target = self
         button.action = #selector(togglePopover(_:))
+    }
+
+    private func startMenubarRefreshTimer() {
+        menubarRefreshTimer?.invalidate()
+        menubarRefreshTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+            self?.viewModel?.refreshMenubarTitle()
+        }
+        menubarRefreshTimer?.tolerance = 5
+        viewModel?.refreshMenubarTitle()
     }
 
     private func updatePopoverContent() {
