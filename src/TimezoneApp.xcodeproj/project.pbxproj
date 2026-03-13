@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A100003A0000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000390000000000000001 /* Assets.xcassets */; };
 		A10000310000000000000001 /* CityRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000300000000000000001 /* CityRowView.swift */; };
 		A10000330000000000000001 /* TimeSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000320000000000000001 /* TimeSliderView.swift */; };
 		A10000350000000000000001 /* LegendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000340000000000000001 /* LegendView.swift */; };
@@ -28,6 +29,7 @@
 
 /* Begin PBXFileReference section */
 		A10000030000000000000001 /* TimezoneApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimezoneApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000390000000000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A100000A0000000000000001 /* TimezoneAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimezoneAppApp.swift; sourceTree = "<group>"; };
 		A100000B0000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A10000150000000000000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -78,6 +80,7 @@
 		A10000090000000000000001 /* TimezoneApp */ = {
 			isa = PBXGroup;
 			children = (
+				A10000390000000000000001 /* Assets.xcassets */,
 				A100001C0000000000000001 /* Models */,
 				A100001F0000000000000001 /* Services */,
 				A10000260000000000000001 /* ViewModels */,
@@ -190,6 +193,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A100003A0000000000000001 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,7 +281,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.TimezoneApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.patrikbernas.TimezoneApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -301,7 +305,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.TimezoneApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.patrikbernas.TimezoneApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

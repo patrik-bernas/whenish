@@ -76,7 +76,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func startMenubarRefreshTimer() {
         menubarRefreshTimer?.invalidate()
         menubarRefreshTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
-            self?.viewModel?.refreshMenubarTitle()
+            Task { @MainActor [weak self] in
+                self?.viewModel?.refreshMenubarTitle()
+            }
         }
         menubarRefreshTimer?.tolerance = 5
         viewModel?.refreshMenubarTitle()
