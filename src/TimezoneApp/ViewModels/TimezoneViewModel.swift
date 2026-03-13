@@ -36,16 +36,16 @@ final class TimezoneViewModel: ObservableObject {
     private let citySearchService: CitySearchService
 
     init(
-        persistenceService: PersistenceService = PersistenceService(),
+        persistenceService: PersistenceService? = nil,
         timezoneService: TimezoneService = TimezoneService(),
         citySearchService: CitySearchService = CitySearchService()
     ) {
-        self.persistenceService = persistenceService
-        self.timezoneService = timezoneService
         self.citySearchService = citySearchService
+        self.persistenceService = persistenceService ?? PersistenceService(citySearchService: citySearchService)
+        self.timezoneService = timezoneService
 
-        let loadedGroups = persistenceService.loadGroups()
-        let loadedSettings = persistenceService.loadSettings()
+        let loadedGroups = self.persistenceService.loadGroups()
+        let loadedSettings = self.persistenceService.loadSettings()
         let initialIndex = loadedGroups.firstIndex { $0.id == loadedSettings.activeGroupId } ?? 0
 
         groups = loadedGroups

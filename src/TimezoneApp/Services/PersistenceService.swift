@@ -7,11 +7,16 @@ struct PersistenceService {
     }
 
     private let userDefaults: UserDefaults
+    private let citySearchService: CitySearchService
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
 
-    init(userDefaults: UserDefaults = .standard) {
+    init(
+        userDefaults: UserDefaults = .standard,
+        citySearchService: CitySearchService = CitySearchService()
+    ) {
         self.userDefaults = userDefaults
+        self.citySearchService = citySearchService
     }
 
     func saveGroups(_ groups: [TimezoneGroup]) {
@@ -68,29 +73,15 @@ struct PersistenceService {
 
     private func defaultHomeCity() -> City {
         let identifier = TimeZone.current.identifier
-        let components = identifier.split(separator: "/")
-        let fallbackName = components.last?
-            .replacingOccurrences(of: "_", with: " ") ?? identifier
-        let countryCode = components.first.map(String.init)?.prefix(2).uppercased() ?? "UN"
+        let result = citySearchService.result(for: identifier)
 
         return City(
-            name: fallbackName,
-            countryCode: countryCode,
-            flag: flagEmoji(for: String(countryCode)),
+            name: result.cityName,
+            countryCode: result.countryCode,
+            flag: result.flag,
             timeZoneIdentifier: identifier,
             isHome: true,
             showInMenubar: true
         )
-    }
-
-    private func flagEmoji(for countryCode: String) -> String {
-        let scalars = countryCode.uppercased().unicodeScalars.compactMap { scalar -> UnicodeScalar? in
-            guard let base = UnicodeScalar(127397 + scalar.value) else {
-                return nil
-            }
-            return base
-        }
-
-        return scalars.isEmpty ? "🌍" : String(String.UnicodeScalarView(scalars))
     }
 }
