@@ -10,6 +10,7 @@
 		A10000310000000000000001 /* CityRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000300000000000000001 /* CityRowView.swift */; };
 		A10000330000000000000001 /* TimeSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000320000000000000001 /* TimeSliderView.swift */; };
 		A10000350000000000000001 /* LegendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000340000000000000001 /* LegendView.swift */; };
+		A10000370000000000000001 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000360000000000000001 /* SettingsView.swift */; };
 		A100002F0000000000000001 /* TimelineBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002E0000000000000001 /* TimelineBarView.swift */; };
 		A100002D0000000000000001 /* GroupPillsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002C0000000000000001 /* GroupPillsView.swift */; };
 		A100002B0000000000000001 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002A0000000000000001 /* SearchBarView.swift */; };
@@ -44,6 +45,7 @@
 		A10000300000000000000001 /* CityRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityRowView.swift; sourceTree = "<group>"; };
 		A10000320000000000000001 /* TimeSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSliderView.swift; sourceTree = "<group>"; };
 		A10000340000000000000001 /* LegendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendView.swift; sourceTree = "<group>"; };
+		A10000360000000000000001 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 				A10000340000000000000001 /* LegendView.swift */,
 				A10000270000000000000001 /* PopoverView.swift */,
 				A100002A0000000000000001 /* SearchBarView.swift */,
+				A10000360000000000000001 /* SettingsView.swift */,
 				A10000320000000000000001 /* TimeSliderView.swift */,
 				A100002E0000000000000001 /* TimelineBarView.swift */,
 			);
@@ -207,6 +210,7 @@
 				A100001E0000000000000001 /* PersistenceService.swift in Sources */,
 				A10000280000000000000001 /* PopoverView.swift in Sources */,
 				A100002B0000000000000001 /* SearchBarView.swift in Sources */,
+				A10000370000000000000001 /* SettingsView.swift in Sources */,
 				A100000D0000000000000001 /* TimezoneAppApp.swift in Sources */,
 				A10000330000000000000001 /* TimeSliderView.swift in Sources */,
 				A100002F0000000000000001 /* TimelineBarView.swift in Sources */,

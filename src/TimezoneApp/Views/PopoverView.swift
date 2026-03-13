@@ -4,6 +4,23 @@ struct PopoverView: View {
     @EnvironmentObject private var viewModel: TimezoneViewModel
 
     var body: some View {
+        Group {
+            if viewModel.isSettingsOpen {
+                SettingsView()
+            } else {
+                mainContent
+            }
+        }
+        .frame(width: 370)
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
+        )
+    }
+
+    private var mainContent: some View {
         VStack(spacing: 0) {
             SearchBarView()
                 .padding(.horizontal, 24)
@@ -28,12 +45,5 @@ struct PopoverView: View {
             LegendView()
                 .padding(.top, 2)
         }
-        .frame(width: 370)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
-        )
     }
 }
