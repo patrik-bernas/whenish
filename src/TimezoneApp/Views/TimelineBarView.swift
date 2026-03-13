@@ -21,10 +21,10 @@ struct TimelineBarView: View {
             .clipShape(Capsule())
 
             if showsScrubLine {
-                Rectangle()
+                RoundedRectangle(cornerRadius: 0.5)
                     .fill(Color.white.opacity(0.45))
                     .frame(width: 1, height: 9)
-                    .offset(x: scrubX)
+                    .offset(x: scrubX - 0.5)
             }
         }
         .frame(width: width, height: 9)
@@ -32,20 +32,20 @@ struct TimelineBarView: View {
 
     private var scrubX: CGFloat {
         let normalized = min(max((scrubberOffset + 24) / 48, 0), 1)
-        return normalized * width
+        return (normalized * width).rounded(.toNearestOrEven)
     }
 
     private func color(for slot: Int) -> Color {
-        let reference = Date().addingTimeInterval(scrubberOffset * 3600)
+        let reference = Date()
         let slotDate = reference.addingTimeInterval((Double(slot) - 24) * 3600)
         let localHour = Calendar.current.component(in: timeZone, from: slotDate)
         switch timezoneService.availabilityState(for: localHour) {
         case .available:
-            return Color(red: 134 / 255, green: 214 / 255, blue: 177 / 255).opacity(0.75)
+            return Color(red: 52 / 255, green: 211 / 255, blue: 153 / 255).opacity(0.85)
         case .headsUp:
-            return Color(red: 229 / 255, green: 195 / 255, blue: 120 / 255).opacity(0.65)
+            return Color(red: 251 / 255, green: 191 / 255, blue: 36 / 255).opacity(0.80)
         case .sleeping:
-            return Color(red: 205 / 255, green: 133 / 255, blue: 133 / 255).opacity(0.55)
+            return Color(red: 248 / 255, green: 113 / 255, blue: 113 / 255).opacity(0.70)
         }
     }
 }

@@ -57,11 +57,18 @@ final class TimezoneViewModel: ObservableObject {
     }
 
     var activeGroup: TimezoneGroup? {
-        groups.indices.contains(activeGroupIndex) ? groups[activeGroupIndex] : nil
+        guard groups.indices.contains(activeGroupIndex) else { return nil }
+        var group = groups[activeGroupIndex]
+        group.cities.sort { city1, city2 in
+            let tz1 = TimeZone(identifier: city1.timeZoneIdentifier) ?? .current
+            let tz2 = TimeZone(identifier: city2.timeZoneIdentifier) ?? .current
+            return tz1.secondsFromGMT() < tz2.secondsFromGMT()
+        }
+        return group
     }
 
     var menubarCities: [City] {
-        (activeGroup?.cities ?? []).filter(\.showInMenubar)
+        groups.flatMap(\.cities).filter(\.showInMenubar)
     }
 
     var offsetLabel: String {
@@ -72,8 +79,13 @@ final class TimezoneViewModel: ObservableObject {
     }
 
     var currentLocalTimeString: String {
-        let date = timezoneService.currentTime(in: homeTimeZone, offsetHours: scrubberOffset)
+        let date = timezoneService.currentTime(in: homeTimeZone, offsetHours: 0)
         return timezoneService.formattedTime(date: date, use24Hour: settings.use24HourFormat)
+    }
+
+    var currentLocalTimeParts: TimezoneService.TimeParts {
+        let date = timezoneService.currentTime(in: homeTimeZone, offsetHours: 0)
+        return timezoneService.formattedTimeParts(date: date, use24Hour: settings.use24HourFormat)
     }
 
     var homeTimeZone: TimeZone {
@@ -82,7 +94,7 @@ final class TimezoneViewModel: ObservableObject {
 
     func addCity(_ result: CitySearchResult) {
         guard var group = activeGroup else { return }
-        guard group.cities.count < 6 else { return }
+        guard group.cities.count < 5 else { return }
         guard !group.cities.contains(where: { $0.timeZoneIdentifier == result.timeZoneIdentifier }) else { return }
 
         let city = City(
@@ -132,6 +144,22 @@ final class TimezoneViewModel: ObservableObject {
         groups[index].name = String(name.prefix(12))
     }
 
+    func addGroup() {
+        guard groups.count < 3 else { return }
+        let defaultName = "Group \(groups.count + 1)"
+        let newGroup = TimezoneGroup(name: defaultName)
+        groups.append(newGroup)
+    }
+
+    func deleteGroup(at index: Int) {
+        guard groups.count > 1, groups.indices.contains(index) else { return }
+        let wasActive = index == activeGroupIndex
+        groups.remove(at: index)
+        if wasActive || activeGroupIndex >= groups.count {
+            activeGroupIndex = 0
+        }
+    }
+
     func timeZone(for city: City) -> TimeZone {
         TimeZone(identifier: city.timeZoneIdentifier) ?? .current
     }
@@ -139,6 +167,11 @@ final class TimezoneViewModel: ObservableObject {
     func displayedTime(for city: City) -> String {
         let date = timezoneService.currentTime(in: timeZone(for: city), offsetHours: scrubberOffset)
         return timezoneService.formattedTime(date: date, use24Hour: settings.use24HourFormat)
+    }
+
+    func displayedTimeParts(for city: City) -> TimezoneService.TimeParts {
+        let date = timezoneService.currentTime(in: timeZone(for: city), offsetHours: scrubberOffset)
+        return timezoneService.formattedTimeParts(date: date, use24Hour: settings.use24HourFormat)
     }
 
     func displayedDayLabel(for city: City) -> String {

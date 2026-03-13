@@ -8,6 +8,6 @@ struct TimezoneGroup: Codable, Identifiable, Equatable {
     init(id: UUID = UUID(), name: String, cities: [City] = []) {
         self.id = id
         self.name = String(name.prefix(12))
-        self.cities = Array(cities.prefix(6))
+        self.cities = Array(cities.prefix(5))
     }
 }

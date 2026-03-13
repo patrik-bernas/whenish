@@ -20,11 +20,31 @@ struct TimezoneService {
         return shiftedDate.addingTimeInterval(delta)
     }
 
+    struct TimeParts {
+        let digits: String   // e.g. "5:14" or "17:14"
+        let period: String?  // e.g. "PM" or nil for 24h
+    }
+
     func formattedTime(date: Date, use24Hour: Bool) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = use24Hour ? "HH:mm" : "h:mm a"
         return formatter.string(from: date)
+    }
+
+    func formattedTimeParts(date: Date, use24Hour: Bool) -> TimeParts {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        if use24Hour {
+            formatter.dateFormat = "HH:mm"
+            return TimeParts(digits: formatter.string(from: date), period: nil)
+        } else {
+            formatter.dateFormat = "h:mm"
+            let digits = formatter.string(from: date)
+            formatter.dateFormat = "a"
+            let period = formatter.string(from: date)
+            return TimeParts(digits: digits, period: period)
+        }
     }
 
     func offsetLabel(from home: TimeZone, to target: TimeZone, at date: Date = Date()) -> String {

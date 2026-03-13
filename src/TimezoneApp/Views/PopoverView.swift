@@ -11,24 +11,19 @@ struct PopoverView: View {
                 mainContent
             }
         }
-        .frame(width: 370)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(Color.white.opacity(0.12), lineWidth: 0.5)
-        )
+        .frame(width: 390)
+        .background(.regularMaterial)
     }
 
     private var mainContent: some View {
         VStack(spacing: 0) {
             SearchBarView()
-                .padding(.horizontal, 24)
-                .padding(.top, 20)
+                .padding(.horizontal, 20)
+                .padding(.top, 14)
 
             GroupPillsView()
-                .padding(.horizontal, 24)
-                .padding(.top, 14)
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
 
             if let group = viewModel.activeGroup {
                 VStack(spacing: 0) {
@@ -36,14 +31,13 @@ struct PopoverView: View {
                         CityRowView(city: city, isLast: index == group.cities.count - 1)
                     }
                 }
-                .padding(.top, 14)
+                .padding(.top, 6)
             }
 
             TimeSliderView()
-                .padding(.top, 10)
+                .padding(.top, 4)
 
             LegendView()
-                .padding(.top, 2)
         }
     }
 }

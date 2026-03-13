@@ -5,24 +5,26 @@ struct TimeSliderView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Divider()
-                .overlay(Color.white.opacity(0.06))
+            Rectangle()
+                .fill(Color.white.opacity(0.06))
+                .frame(height: 0.5)
+                .padding(.horizontal, 18)
 
-            VStack(spacing: 10) {
+            VStack(spacing: 4) {
                 header
                 slider
                 footer
             }
-            .padding(.top, 10)
-            .padding(.horizontal, 24)
-            .padding(.bottom, 14)
+            .padding(.top, 8)
+            .padding(.horizontal, 20)
+            .padding(.bottom, 0)
         }
     }
 
     private var header: some View {
         HStack {
             Text(viewModel.offsetLabel)
-                .font(.system(size: 11, weight: .regular))
+                .font(.system(size: 10, weight: .regular))
                 .foregroundStyle(.white.opacity(0.3))
 
             Spacer()
@@ -30,14 +32,21 @@ struct TimeSliderView: View {
             Button {
                 viewModel.resetScrubber()
             } label: {
-                HStack(spacing: 5) {
+                HStack(spacing: 4) {
                     Image(systemName: "clock")
-                        .font(.system(size: 10, weight: .medium))
-                    Text(viewModel.currentLocalTimeString)
-                        .font(.system(size: 12.5, weight: .regular))
+                        .font(.system(size: 9, weight: .medium))
+                        .foregroundStyle(Color(red: 167 / 255, green: 180 / 255, blue: 1).opacity(0.6))
+                    let parts = viewModel.currentLocalTimeParts
+                    Text(parts.digits)
+                        .font(.system(size: 10, weight: .regular))
                         .monospacedDigit()
+                        .foregroundStyle(Color(red: 167 / 255, green: 180 / 255, blue: 1).opacity(0.6))
+                    if let period = parts.period {
+                        Text(period)
+                            .font(.system(size: 8, weight: .regular))
+                            .foregroundStyle(Color(red: 167 / 255, green: 180 / 255, blue: 1).opacity(0.45))
+                    }
                 }
-                .foregroundStyle(Color(red: 167 / 255, green: 180 / 255, blue: 1).opacity(0.6))
             }
             .buttonStyle(.plain)
         }
@@ -46,7 +55,7 @@ struct TimeSliderView: View {
     private var slider: some View {
         GeometryReader { geometry in
             let trackWidth = geometry.size.width
-            let knobDiameter: CGFloat = 18
+            let knobDiameter: CGFloat = 16
             let clampedOffset = max(min(viewModel.scrubberOffset, 24), -24)
             let progress = (clampedOffset + 24) / 48
             let knobX = progress * trackWidth
@@ -56,33 +65,34 @@ struct TimeSliderView: View {
                     timeZone: viewModel.homeTimeZone,
                     scrubberOffset: 0,
                     width: trackWidth,
-                    height: 5,
+                    height: 7,
                     showsScrubLine: false
                 )
 
                 if abs(clampedOffset) > 0.01 {
                     Rectangle()
                         .fill(Color(red: 167 / 255, green: 180 / 255, blue: 1).opacity(0.5))
-                        .frame(width: 1.5, height: 14)
+                        .frame(width: 1.5, height: 12)
                         .offset(x: (trackWidth / 2) - 0.75)
                 }
 
                 Circle()
                     .fill(Color.white.opacity(0.95))
                     .frame(width: knobDiameter, height: knobDiameter)
-                    .shadow(color: Color.black.opacity(0.15), radius: 8, y: 1)
-                    .offset(x: knobX - (knobDiameter / 2))
-                    .gesture(
-                        DragGesture(minimumDistance: 0)
-                            .onChanged { value in
-                                let location = min(max(value.location.x, 0), trackWidth)
-                                let normalized = location / trackWidth
-                                viewModel.scrubberOffset = (normalized * 48) - 24
-                            }
-                    )
+                    .shadow(color: Color.black.opacity(0.15), radius: 6, y: 1)
+                    .position(x: knobX, y: geometry.size.height / 2)
             }
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                    .onChanged { value in
+                        let location = min(max(value.location.x, 0), trackWidth)
+                        let normalized = location / trackWidth
+                        viewModel.scrubberOffset = (normalized * 48) - 24
+                    }
+            )
         }
-        .frame(height: 22)
+        .frame(height: 20)
     }
 
     private var footer: some View {
@@ -91,7 +101,7 @@ struct TimeSliderView: View {
             Spacer()
             Text("+24h")
         }
-        .font(.system(size: 9.5, weight: .regular))
+        .font(.system(size: 9, weight: .regular))
         .foregroundStyle(.white.opacity(0.18))
     }
 }

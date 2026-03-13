@@ -4,16 +4,16 @@ struct GroupPillsView: View {
     @EnvironmentObject private var viewModel: TimezoneViewModel
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 5) {
             ForEach(Array(viewModel.groups.prefix(3).enumerated()), id: \.element.id) { index, group in
                 Button {
                     viewModel.switchGroup(to: index)
                 } label: {
                     Text(group.name)
-                        .font(.system(size: 12, weight: viewModel.activeGroupIndex == index ? .semibold : .regular))
+                        .font(.system(size: 11, weight: viewModel.activeGroupIndex == index ? .semibold : .regular))
                         .foregroundStyle(viewModel.activeGroupIndex == index ? Color.white.opacity(0.9) : Color.white.opacity(0.35))
-                        .padding(.horizontal, 16)
-                        .frame(height: 30)
+                        .padding(.horizontal, 12)
+                        .frame(height: 26)
                         .background(viewModel.activeGroupIndex == index ? Color.white.opacity(0.14) : Color.white.opacity(0.04))
                         .clipShape(Capsule())
                         .overlay(
