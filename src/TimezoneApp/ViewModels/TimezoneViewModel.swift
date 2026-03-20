@@ -327,22 +327,19 @@ final class TimezoneViewModel: ObservableObject {
             }
             .joined(separator: " · ")
 
-        // Build column-aligned tooltip
-        let maxNameLength = cities.map { $0.name.count }.max() ?? 10
+        // Build tooltip with middle dot separators
         let tooltipText = cities.map { city -> String in
             let formatter = DateFormatter()
             formatter.timeZone = TimeZone(identifier: city.timeZoneIdentifier) ?? .current
             formatter.locale = Locale(identifier: "en_US_POSIX")
 
-            let name = city.name.padding(toLength: maxNameLength + 2, withPad: " ", startingAt: 0)
-
             formatter.dateFormat = settings.use24HourFormat ? "HH:mm" : "h:mm a"
-            let time = formatter.string(from: now).padding(toLength: 8, withPad: " ", startingAt: 0)
+            let time = formatter.string(from: now)
 
             formatter.dateFormat = "EEE, MMM d"
             let date = formatter.string(from: now)
 
-            return "\(name)\(time)  \(date)"
+            return "\(city.name) · \(time) · \(date)"
         }.joined(separator: "\n")
 
         AppDelegate.shared?.updateStatusItem(title: title)

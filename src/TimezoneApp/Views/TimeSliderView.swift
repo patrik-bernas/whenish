@@ -76,7 +76,7 @@ struct TimeSliderView: View {
 
                 if abs(clampedOffset) > 0.01 {
                     Rectangle()
-                        .fill(Color(red: 0.231, green: 0.122, blue: 0.169))
+                        .fill(Color(red: 140/255, green: 130/255, blue: 255/255).opacity(0.7))
                         .frame(width: 1.5, height: 12)
                         .offset(x: (trackWidth / 2) - 0.75)
                 }

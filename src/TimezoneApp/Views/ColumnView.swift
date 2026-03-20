@@ -3,7 +3,7 @@ import SwiftUI
 struct ColumnView: View {
     @EnvironmentObject private var viewModel: TimezoneViewModel
 
-    private let columnBarHeight: CGFloat = 129
+    private let columnBarHeight: CGFloat = 140
     private let maxColumnWidth: CGFloat = 65
     private let barWidth: CGFloat = 22
     private let columnGap: CGFloat = 6
@@ -13,18 +13,17 @@ struct ColumnView: View {
         if let group = viewModel.activeGroup {
             let cities = group.cities
             VStack(spacing: 0) {
-                // Column headers
+                // Column headers: flag + name + offset + menubar dot
                 columnHeaders(cities: cities)
-                    .padding(.top, 6)
+                    .frame(height: 75)
 
                 // Column bars with scrub line
                 columnBars(cities: cities)
-                    .padding(.top, 6)
+                    .frame(height: columnBarHeight)
 
-                // Time labels below columns
+                // Time labels + date labels
                 timeLabels(cities: cities)
-                    .padding(.top, 6)
-
+                    .frame(height: 45)
             }
             .padding(.horizontal, 20)
         }
@@ -35,15 +34,11 @@ struct ColumnView: View {
     private func columnHeaders(cities: [City]) -> some View {
         HStack(spacing: columnGap) {
             ForEach(cities) { city in
-                columnHeader(city: city)
+                ColumnHeaderView(city: city)
                     .frame(maxWidth: maxColumnWidth)
             }
         }
         .frame(maxWidth: .infinity)
-    }
-
-    private func columnHeader(city: City) -> some View {
-        ColumnHeaderView(city: city)
     }
 
     // MARK: - Column Bars
@@ -51,7 +46,6 @@ struct ColumnView: View {
     private func columnBars(cities: [City]) -> some View {
         GeometryReader { geometry in
             let availableWidth = geometry.size.width
-            // Headers use full column width; bars are slim pillars centered within
             let headerColWidth = cities.isEmpty ? maxColumnWidth : min((availableWidth - CGFloat(max(cities.count - 1, 0)) * columnGap) / CGFloat(cities.count), maxColumnWidth)
             let totalHeaderWidth = headerColWidth * CGFloat(cities.count) + CGFloat(max(cities.count - 1, 0)) * columnGap
             let leadingOffset = (availableWidth - totalHeaderWidth) / 2
@@ -74,10 +68,10 @@ struct ColumnView: View {
                 }
                 .frame(maxWidth: .infinity)
 
-                // "Now" marker — dark plum line, visible when scrubbed away
+                // "Now" marker — indigo line, visible when scrubbed away
                 if abs(clampedOffset) > 0.01 {
                     Rectangle()
-                        .fill(Color(red: 0.231, green: 0.122, blue: 0.169))
+                        .fill(Color(red: 140/255, green: 130/255, blue: 255/255).opacity(0.7))
                         .frame(width: totalHeaderWidth, height: 2)
                         .offset(x: leadingOffset, y: columnBarHeight / 2 - 1)
                 }
@@ -85,8 +79,8 @@ struct ColumnView: View {
                 // Horizontal scrub line
                 Rectangle()
                     .fill(Color.white.opacity(0.5))
-                    .frame(width: totalHeaderWidth, height: 1.5)
-                    .offset(x: leadingOffset, y: scrubY - 0.75)
+                    .frame(width: totalHeaderWidth, height: 2)
+                    .offset(x: leadingOffset, y: scrubY - 1)
                     .allowsHitTesting(false)
 
                 // Scrub handle dot
@@ -107,7 +101,6 @@ struct ColumnView: View {
                     }
             )
         }
-        .frame(height: columnBarHeight)
     }
 
     // MARK: - Time Labels
@@ -215,9 +208,6 @@ private struct VerticalTimelineBar: View {
     private let timezoneService = TimezoneService()
 
     private var nowNormalized: CGFloat {
-        // "Now" is always at offset 0 → slot 24 out of 48 → normalized 0.5
-        // But we need the actual position based on the current time relationship
-        // Slot 24 = now, so nowY = 24/48 = 0.5 of bar height
         return 0.5
     }
 
@@ -232,9 +222,9 @@ private struct VerticalTimelineBar: View {
             }
             .clipShape(RoundedRectangle(cornerRadius: 3, style: .continuous))
 
-            // "Now" tick mark on this bar — dark plum
+            // "Now" tick mark — indigo
             Rectangle()
-                .fill(Color(red: 0.231, green: 0.122, blue: 0.169))
+                .fill(Color(red: 140/255, green: 130/255, blue: 255/255).opacity(0.7))
                 .frame(width: width, height: 2)
                 .offset(y: nowNormalized * height - 1)
                 .allowsHitTesting(false)

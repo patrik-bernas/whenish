@@ -41,7 +41,7 @@ struct CityRowView: View {
 
                 // Timeline bar: flex — takes ALL remaining space
                 GeometryReader { geo in
-                    TimelineBarView(timeZone: viewModel.timeZone(for: city), scrubberOffset: viewModel.scrubberOffset, width: geo.size.width, height: 6)
+                    TimelineBarView(timeZone: viewModel.timeZone(for: city), scrubberOffset: viewModel.scrubberOffset, width: geo.size.width, height: 6, showsScrubLine: false)
                 }
                 .frame(maxWidth: .infinity)
                 .frame(height: 9)

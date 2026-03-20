@@ -52,11 +52,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         popover.behavior = .transient
         popover.animates = true
         popover.delegate = self
-        popover.contentSize = NSSize(width: 390, height: 500)
+        popover.contentSize = NSSize(width: 390, height: 410)
 
         let contentView = PopoverView()
             .environmentObject(viewModel)
         let hostingController = NSHostingController(rootView: contentView)
+
+        // Glass translucent background via NSVisualEffectView
+        let visualEffect = NSVisualEffectView()
+        visualEffect.material = .underWindowBackground
+        visualEffect.blendingMode = .behindWindow
+        visualEffect.state = .active
+        visualEffect.alphaValue = 0.85
+        visualEffect.translatesAutoresizingMaskIntoConstraints = false
+
+        hostingController.view.addSubview(visualEffect, positioned: .below, relativeTo: nil)
+        NSLayoutConstraint.activate([
+            visualEffect.topAnchor.constraint(equalTo: hostingController.view.topAnchor),
+            visualEffect.bottomAnchor.constraint(equalTo: hostingController.view.bottomAnchor),
+            visualEffect.leadingAnchor.constraint(equalTo: hostingController.view.leadingAnchor),
+            visualEffect.trailingAnchor.constraint(equalTo: hostingController.view.trailingAnchor),
+        ])
+
+        hostingController.view.wantsLayer = true
+        hostingController.view.layer?.backgroundColor = .clear
+
         popover.contentViewController = hostingController
     }
 

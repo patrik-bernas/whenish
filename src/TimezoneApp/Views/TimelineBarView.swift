@@ -23,7 +23,7 @@ struct TimelineBarView: View {
             // Dark plum "now" tick mark — fixed at center, always visible, 10px tall
             if showsScrubLine {
                 Rectangle()
-                    .fill(Color(red: 0.231, green: 0.122, blue: 0.169))
+                    .fill(Color(red: 140/255, green: 130/255, blue: 255/255).opacity(0.7))
                     .frame(width: 2, height: 10)
                     .offset(x: nowX - 1)
                     .allowsHitTesting(false)
