@@ -40,7 +40,7 @@ struct CityRowView: View {
 
                 // Timeline bar: flex — takes ALL remaining space
                 GeometryReader { geo in
-                    TimelineBarView(timeZone: viewModel.timeZone(for: city), scrubberOffset: viewModel.scrubberOffset, width: geo.size.width, height: 6)
+                    TimelineBarView(timeZone: viewModel.timeZone(for: city), referenceDate: viewModel.currentDate, width: geo.size.width, height: 6)
                 }
                 .frame(maxWidth: .infinity)
                 .frame(height: 9)
@@ -112,7 +112,7 @@ struct CityRowView: View {
                 isHovering = hovering
             }
 
-            // No dividers between rows — single divider before slider is in TimeSliderView
+            // Rows intentionally render without dividers.
         }
     }
 }

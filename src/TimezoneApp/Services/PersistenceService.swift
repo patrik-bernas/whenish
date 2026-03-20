@@ -30,13 +30,14 @@ struct PersistenceService {
     func loadGroups() -> [TimezoneGroup] {
         guard
             let data = userDefaults.data(forKey: Keys.groups),
-            let groups = try? decoder.decode([TimezoneGroup].self, from: data),
-            !groups.isEmpty
+            let decodedGroups = try? decoder.decode([TimezoneGroup].self, from: data)
         else {
             let groups = [defaultGroup()]
             saveGroups(groups)
             return groups
         }
+
+        let groups = sanitizedGroups(decodedGroups)
 
         // Refresh flags from current mapping — fixes persisted wrong flags from earlier versions
         let refreshed = groups.map { group -> TimezoneGroup in
@@ -49,6 +50,9 @@ struct PersistenceService {
                 return c
             }
             return g
+        }
+        if refreshed != groups {
+            saveGroups(refreshed)
         }
         return refreshed
     }
@@ -81,6 +85,21 @@ struct PersistenceService {
 
     private func defaultGroup() -> TimezoneGroup {
         TimezoneGroup(name: "Work", cities: [defaultHomeCity()])
+    }
+
+    private func sanitizedGroups(_ groups: [TimezoneGroup]) -> [TimezoneGroup] {
+        let sanitized = Array(groups.prefix(5)).map { group -> TimezoneGroup in
+            var sanitizedGroup = group
+            sanitizedGroup.name = String(group.name.prefix(12))
+            sanitizedGroup.cities = Array(group.cities.prefix(5))
+            return sanitizedGroup
+        }
+
+        if sanitized.isEmpty {
+            return [defaultGroup()]
+        }
+
+        return sanitized
     }
 
     private func defaultHomeCity() -> City {

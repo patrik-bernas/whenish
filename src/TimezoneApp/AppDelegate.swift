@@ -10,14 +10,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     private var menubarRefreshTimer: Timer?
     private var positioningView: NSView?
 
-    var viewModel: TimezoneViewModel?
+    let viewModel = TimezoneViewModel()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Self.shared = self
-        if viewModel == nil {
-            viewModel = .shared
-        }
-
         configurePopover()
         configureStatusItem()
         startMenubarRefreshTimer()
@@ -51,8 +47,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     // MARK: - Popover
 
     private func configurePopover() {
-        guard let viewModel else { return }
-
         popover = NSPopover()
         popover.behavior = .transient
         popover.animates = true
@@ -98,7 +92,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         guard let button = statusItem.button else { return }
 
         // Reset scrubber to "Now" every time the popover opens
-        viewModel?.resetScrubber()
+        viewModel.resetScrubber()
 
         // Arrow hiding trick:
         // 1. Create an invisible positioning view inside the button
@@ -141,7 +135,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         menubarRefreshTimer?.invalidate()
 
         // Update immediately
-        viewModel?.refreshMenubarTitle()
+        viewModel.refreshMenubarTitle()
 
         // Calculate delay until the next minute boundary (:00 seconds)
         let now = Date()
@@ -153,12 +147,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         // Fire once at the exact next minute, then repeat every 60s
         DispatchQueue.main.asyncAfter(deadline: .now() + delayToNextMinute) { [weak self] in
             guard let self else { return }
-            Task { @MainActor [weak self] in
-                self?.viewModel?.refreshMenubarTitle()
-            }
+            self.viewModel.refreshMenubarTitle()
             let timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
                 Task { @MainActor [weak self] in
-                    self?.viewModel?.refreshMenubarTitle()
+                    self?.viewModel.refreshMenubarTitle()
                 }
             }
             RunLoop.main.add(timer, forMode: .common)

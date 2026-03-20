@@ -2,14 +2,12 @@ import SwiftUI
 
 struct TimelineBarView: View {
     let timeZone: TimeZone
-    let scrubberOffset: Double
+    let referenceDate: Date
     var width: CGFloat = 120
     var height: CGFloat = 3
 
-    private static let timezoneService = TimezoneService()
-
     var body: some View {
-        let slotColors = Self.computeSlotColors(timeZone: timeZone)
+        let slotColors = TimelineSlotColors.colors(for: timeZone, referenceDate: referenceDate)
         ZStack(alignment: .leading) {
             HStack(spacing: 0) {
                 ForEach(0..<48, id: \.self) { slot in
@@ -22,13 +20,31 @@ struct TimelineBarView: View {
         }
         .frame(width: width, height: height)
     }
+}
 
-    private static func computeSlotColors(timeZone: TimeZone) -> [Color] {
-        let reference = Date()
+@MainActor
+enum TimelineSlotColors {
+    private struct CacheKey: Hashable {
+        let timeZoneIdentifier: String
+        let hourBucket: Int
+    }
+
+    private static let timezoneService = TimezoneService()
+    private static var cache: [CacheKey: [Color]] = [:]
+
+    static func colors(for timeZone: TimeZone, referenceDate: Date) -> [Color] {
+        let key = CacheKey(
+            timeZoneIdentifier: timeZone.identifier,
+            hourBucket: Int(referenceDate.timeIntervalSinceReferenceDate / 3600)
+        )
+        if let cached = cache[key] {
+            return cached
+        }
+
         var calendar = Calendar.current
         calendar.timeZone = timeZone
-        return (0..<48).map { slot in
-            let slotDate = reference.addingTimeInterval((Double(slot) - 24) * 3600)
+        let colors = (0..<48).map { slot in
+            let slotDate = referenceDate.addingTimeInterval((Double(slot) - 24) * 3600)
             let localHour = calendar.component(.hour, from: slotDate)
             switch timezoneService.availabilityState(for: localHour) {
             case .available:
@@ -39,5 +55,7 @@ struct TimelineBarView: View {
                 return Color(red: 239/255, green: 68/255, blue: 68/255).opacity(0.55)
             }
         }
+        cache[key] = colors
+        return colors
     }
 }

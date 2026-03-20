@@ -3,8 +3,6 @@ import Foundation
 
 @MainActor
 final class TimezoneViewModel: ObservableObject {
-    static let shared = TimezoneViewModel()
-
     @Published var groups: [TimezoneGroup] {
         didSet { scheduleGroupsPersist() }
     }
@@ -26,6 +24,7 @@ final class TimezoneViewModel: ObservableObject {
     @Published var searchQuery: String = ""
 
     @Published private(set) var searchResults: [CitySearchResult] = []
+    @Published private(set) var currentDate: Date = Date()
 
     private let persistenceService: PersistenceService
     private let timezoneService: TimezoneService
@@ -33,10 +32,12 @@ final class TimezoneViewModel: ObservableObject {
 
     private var groupsPersistTask: Task<Void, Never>?
     private var settingsPersistTask: Task<Void, Never>?
+    private var clockTask: Task<Void, Never>?
     private var cancellables = Set<AnyCancellable>()
 
     // Cache sorted active group to avoid re-sorting on every access
     private var cachedActiveGroupIndex: Int = -1
+    private var cachedActiveGroupSource: TimezoneGroup?
     private var cachedSortedGroup: TimezoneGroup?
 
     init(
@@ -57,7 +58,14 @@ final class TimezoneViewModel: ObservableObject {
         activeGroupIndex = initialIndex
 
         setupBindings()
+        startClockUpdates()
         refreshStatusItemTitle()
+    }
+
+    deinit {
+        groupsPersistTask?.cancel()
+        settingsPersistTask?.cancel()
+        clockTask?.cancel()
     }
 
     // MARK: - Computed properties
@@ -67,7 +75,10 @@ final class TimezoneViewModel: ObservableObject {
         let group = groups[activeGroupIndex]
 
         // Return cached sorted version if the group hasn't changed
-        if activeGroupIndex == cachedActiveGroupIndex, let cached = cachedSortedGroup, cached == group {
+        if activeGroupIndex == cachedActiveGroupIndex,
+           let cachedSource = cachedActiveGroupSource,
+           let cached = cachedSortedGroup,
+           cachedSource == group {
             return cached
         }
 
@@ -78,6 +89,7 @@ final class TimezoneViewModel: ObservableObject {
             return tz1.secondsFromGMT() < tz2.secondsFromGMT()
         }
         cachedActiveGroupIndex = activeGroupIndex
+        cachedActiveGroupSource = group
         cachedSortedGroup = sorted
         return sorted
     }
@@ -103,14 +115,8 @@ final class TimezoneViewModel: ObservableObject {
         return "\(sign)\(roundedOffset)h from now"
     }
 
-    var currentLocalTimeString: String {
-        let now = Date()
-        return timezoneService.formattedTime(date: now, use24Hour: settings.use24HourFormat)
-    }
-
     var currentLocalTimeParts: TimezoneService.TimeParts {
-        let now = Date()
-        return timezoneService.formattedTimeParts(date: now, use24Hour: settings.use24HourFormat)
+        timezoneService.formattedTimeParts(date: currentDate, use24Hour: settings.use24HourFormat)
     }
 
     var homeTimeZone: TimeZone {
@@ -140,6 +146,9 @@ final class TimezoneViewModel: ObservableObject {
     func removeCity(_ city: City) {
         guard groups.indices.contains(activeGroupIndex) else { return }
         groups[activeGroupIndex].cities.removeAll { $0.id == city.id }
+        if city.isHome {
+            assignFallbackHomeTimezone()
+        }
     }
 
     func toggleMenubar(for city: City) {
@@ -187,31 +196,24 @@ final class TimezoneViewModel: ObservableObject {
         if wasActive || activeGroupIndex >= groups.count {
             activeGroupIndex = 0
         }
+        if let homeIdentifier = settings.homeTimeZoneIdentifier,
+           !containsCity(withTimeZoneIdentifier: homeIdentifier) {
+            assignFallbackHomeTimezone()
+        }
     }
 
     func timeZone(for city: City) -> TimeZone {
         TimeZone(identifier: city.timeZoneIdentifier) ?? .current
     }
 
-    func displayedTime(for city: City) -> String {
-        let date = timezoneService.currentTime(in: timeZone(for: city), offsetHours: scrubberOffset)
-        return timezoneService.formattedTime(date: date, use24Hour: settings.use24HourFormat)
-    }
-
     func displayedTimeParts(for city: City) -> TimezoneService.TimeParts {
-        let date = timezoneService.currentTime(in: timeZone(for: city), offsetHours: scrubberOffset)
+        let date = timezoneService.currentTime(from: currentDate, in: timeZone(for: city), offsetHours: scrubberOffset)
         return timezoneService.formattedTimeParts(date: date, use24Hour: settings.use24HourFormat)
     }
 
-    func displayedDayLabel(for city: City) -> String {
-        let shiftedDate = timezoneService.currentTime(in: timeZone(for: city), offsetHours: scrubberOffset)
-        let referenceDate = timezoneService.currentTime(in: timeZone(for: city), offsetHours: 0)
-        return timezoneService.dayLabel(for: shiftedDate, relativeTo: referenceDate)
-    }
-
     func displayedDayLabelParts(for city: City) -> TimezoneService.DayLabelParts {
-        let shiftedDate = timezoneService.currentTime(in: timeZone(for: city), offsetHours: scrubberOffset)
-        let referenceDate = timezoneService.currentTime(in: timeZone(for: city), offsetHours: 0)
+        let shiftedDate = timezoneService.currentTime(from: currentDate, in: timeZone(for: city), offsetHours: scrubberOffset)
+        let referenceDate = timezoneService.currentTime(from: currentDate, in: timeZone(for: city), offsetHours: 0)
         return timezoneService.dayLabelParts(for: shiftedDate, relativeTo: referenceDate)
     }
 
@@ -255,9 +257,27 @@ final class TimezoneViewModel: ObservableObject {
         // Scrubber only affects times shown inside the popover.
     }
 
+    private func startClockUpdates() {
+        clockTask?.cancel()
+        clockTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            self.currentDate = Date()
+
+            while !Task.isCancelled {
+                let now = Date()
+                let nextMinute = Calendar.current.dateInterval(of: .minute, for: now)?.end ?? now.addingTimeInterval(60)
+                let delay = max(nextMinute.timeIntervalSince(now), 0.1)
+                try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                guard !Task.isCancelled else { return }
+                self.currentDate = Date()
+            }
+        }
+    }
+
     /// Debounce groups persistence — coalesce rapid mutations (e.g. drag, rename typing)
     private func scheduleGroupsPersist() {
         cachedSortedGroup = nil // Invalidate cache
+        cachedActiveGroupSource = nil
 
         groupsPersistTask?.cancel()
         groupsPersistTask = Task { @MainActor [weak self] in
@@ -343,5 +363,20 @@ final class TimezoneViewModel: ObservableObject {
         }
 
         return TimeZone.current
+    }
+
+    private func assignFallbackHomeTimezone() {
+        if let fallbackCity = groups.lazy.flatMap(\.cities).first {
+            setHomeTimezone(to: fallbackCity.timeZoneIdentifier)
+            return
+        }
+
+        settings.homeTimeZoneIdentifier = TimeZone.current.identifier
+    }
+
+    private func containsCity(withTimeZoneIdentifier identifier: String) -> Bool {
+        groups.contains { group in
+            group.cities.contains { $0.timeZoneIdentifier == identifier }
+        }
     }
 }

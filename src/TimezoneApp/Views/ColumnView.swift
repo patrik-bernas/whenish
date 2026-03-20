@@ -59,6 +59,7 @@ struct ColumnView: View {
                     ForEach(cities) { city in
                         VerticalTimelineBar(
                             timeZone: viewModel.timeZone(for: city),
+                            referenceDate: viewModel.currentDate,
                             width: barWidth,
                             height: columnBarHeight
                         )
@@ -201,13 +202,12 @@ private struct ColumnHeaderView: View {
 
 private struct VerticalTimelineBar: View {
     let timeZone: TimeZone
+    let referenceDate: Date
     let width: CGFloat
     let height: CGFloat
 
-    private static let timezoneService = TimezoneService()
-
     var body: some View {
-        let slotColors = Self.computeSlotColors(timeZone: timeZone)
+        let slotColors = TimelineSlotColors.colors(for: timeZone, referenceDate: referenceDate)
         ZStack(alignment: .top) {
             VStack(spacing: 0) {
                 ForEach(0..<48, id: \.self) { slot in
@@ -224,24 +224,6 @@ private struct VerticalTimelineBar: View {
                 .frame(width: width, height: 2)
                 .offset(y: 0.5 * height - 1)
                 .allowsHitTesting(false)
-        }
-    }
-
-    private static func computeSlotColors(timeZone: TimeZone) -> [Color] {
-        let reference = Date()
-        var calendar = Calendar.current
-        calendar.timeZone = timeZone
-        return (0..<48).map { slot in
-            let slotDate = reference.addingTimeInterval((Double(slot) - 24) * 3600)
-            let localHour = calendar.component(.hour, from: slotDate)
-            switch timezoneService.availabilityState(for: localHour) {
-            case .available:
-                return Color(red: 16/255, green: 185/255, blue: 129/255).opacity(0.85)
-            case .headsUp:
-                return Color(red: 251/255, green: 191/255, blue: 36/255).opacity(0.70)
-            case .sleeping:
-                return Color(red: 239/255, green: 68/255, blue: 68/255).opacity(0.55)
-            }
         }
     }
 }

@@ -41,9 +41,8 @@ struct TimezoneService {
         return f
     }()
 
-    func currentTime(in timeZone: TimeZone, offsetHours: Double = 0) -> Date {
-        let now = Date()
-        let shiftedDate = now.addingTimeInterval(offsetHours * 3600)
+    func currentTime(from referenceDate: Date = Date(), in timeZone: TimeZone, offsetHours: Double = 0) -> Date {
+        let shiftedDate = referenceDate.addingTimeInterval(offsetHours * 3600)
 
         let utcOffset = TimeInterval(timeZone.secondsFromGMT(for: shiftedDate))
         let currentOffset = TimeInterval(TimeZone.current.secondsFromGMT(for: shiftedDate))
@@ -94,10 +93,6 @@ struct TimezoneService {
         let relative: String  // "Today", "Tomorrow", "Yesterday"
         let date: String      // "Mar 20"
         var isToday: Bool { relative == "Today" }
-    }
-
-    func dayLabel(for date: Date, relativeTo reference: Date) -> String {
-        dayLabelParts(for: date, relativeTo: reference).relative
     }
 
     func dayLabelParts(for date: Date, relativeTo reference: Date) -> DayLabelParts {
