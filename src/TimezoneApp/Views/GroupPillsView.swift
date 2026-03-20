@@ -92,7 +92,7 @@ struct GroupPillsView: View {
                         viewModel.deleteGroup(at: idx)
                     }
                 } message: {
-                    Text("This will remove \"\(viewModel.groups[index].name)\" and all its cities.")
+                    Text("This will remove \"\(viewModel.groups.indices.contains(index) ? viewModel.groups[index].name : "this group")\" and all its cities.")
                 }
             }
         }

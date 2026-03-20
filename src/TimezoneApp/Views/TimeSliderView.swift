@@ -70,8 +70,7 @@ struct TimeSliderView: View {
                     timeZone: viewModel.homeTimeZone,
                     scrubberOffset: 0,
                     width: trackWidth,
-                    height: 7,
-                    showsScrubLine: false
+                    height: 7
                 )
 
                 if abs(clampedOffset) > 0.01 {

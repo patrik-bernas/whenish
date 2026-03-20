@@ -124,6 +124,15 @@ private struct HomeCityPicker: View {
         .onHover { hovering in isHovering = hovering }
         .overlay(alignment: .topTrailing) {
             if showDropdown, let group = viewModel.activeGroup {
+                // Invisible full-screen tap target to dismiss dropdown
+                Color.clear
+                    .frame(width: 390, height: 410)
+                    .fixedSize()
+                    .contentShape(Rectangle())
+                    .onTapGesture { showDropdown = false }
+                    .offset(x: -100, y: -50)
+                    .zIndex(99)
+
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(Array(group.cities.enumerated()), id: \.element.id) { index, city in
                         Button {

@@ -7,7 +7,6 @@ struct ColumnView: View {
     private let maxColumnWidth: CGFloat = 65
     private let barWidth: CGFloat = 22
     private let columnGap: CGFloat = 6
-    private let timezoneService = TimezoneService()
 
     var body: some View {
         if let group = viewModel.activeGroup {
@@ -205,45 +204,44 @@ private struct VerticalTimelineBar: View {
     let width: CGFloat
     let height: CGFloat
 
-    private let timezoneService = TimezoneService()
-
-    private var nowNormalized: CGFloat {
-        return 0.5
-    }
+    private static let timezoneService = TimezoneService()
 
     var body: some View {
+        let slotColors = Self.computeSlotColors(timeZone: timeZone)
         ZStack(alignment: .top) {
             VStack(spacing: 0) {
                 ForEach(0..<48, id: \.self) { slot in
                     Rectangle()
-                        .fill(color(for: slot))
+                        .fill(slotColors[slot])
                         .frame(width: width, height: height / 48)
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 3, style: .continuous))
 
-            // "Now" tick mark — indigo
+            // "Now" tick mark — indigo, fixed at center (0.5)
             Rectangle()
                 .fill(Color(red: 140/255, green: 130/255, blue: 255/255).opacity(0.7))
                 .frame(width: width, height: 2)
-                .offset(y: nowNormalized * height - 1)
+                .offset(y: 0.5 * height - 1)
                 .allowsHitTesting(false)
         }
     }
 
-    private func color(for slot: Int) -> Color {
+    private static func computeSlotColors(timeZone: TimeZone) -> [Color] {
         let reference = Date()
-        let slotDate = reference.addingTimeInterval((Double(slot) - 24) * 3600)
         var calendar = Calendar.current
         calendar.timeZone = timeZone
-        let localHour = calendar.component(.hour, from: slotDate)
-        switch timezoneService.availabilityState(for: localHour) {
-        case .available:
-            return Color(red: 16/255, green: 185/255, blue: 129/255).opacity(0.85)
-        case .headsUp:
-            return Color(red: 251/255, green: 191/255, blue: 36/255).opacity(0.70)
-        case .sleeping:
-            return Color(red: 239/255, green: 68/255, blue: 68/255).opacity(0.55)
+        return (0..<48).map { slot in
+            let slotDate = reference.addingTimeInterval((Double(slot) - 24) * 3600)
+            let localHour = calendar.component(.hour, from: slotDate)
+            switch timezoneService.availabilityState(for: localHour) {
+            case .available:
+                return Color(red: 16/255, green: 185/255, blue: 129/255).opacity(0.85)
+            case .headsUp:
+                return Color(red: 251/255, green: 191/255, blue: 36/255).opacity(0.70)
+            case .sleeping:
+                return Color(red: 239/255, green: 68/255, blue: 68/255).opacity(0.55)
+            }
         }
     }
 }

@@ -9,6 +9,38 @@ enum AvailabilityState: String, CaseIterable, Codable {
 struct TimezoneService {
     private let calendar = Calendar(identifier: .gregorian)
 
+    // Cached formatters to avoid expensive re-creation in hot paths
+    private static let formatter24h: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "HH:mm"
+        return f
+    }()
+    private static let formatter12h: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "h:mm a"
+        return f
+    }()
+    private static let formatter12hDigits: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "h:mm"
+        return f
+    }()
+    private static let formatterPeriod: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "a"
+        return f
+    }()
+    private static let formatterDayLabel: DateFormatter = {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "MMM d"
+        return f
+    }()
+
     func currentTime(in timeZone: TimeZone, offsetHours: Double = 0) -> Date {
         let now = Date()
         let shiftedDate = now.addingTimeInterval(offsetHours * 3600)
@@ -26,23 +58,16 @@ struct TimezoneService {
     }
 
     func formattedTime(date: Date, use24Hour: Bool) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = use24Hour ? "HH:mm" : "h:mm a"
+        let formatter = use24Hour ? Self.formatter24h : Self.formatter12h
         return formatter.string(from: date)
     }
 
     func formattedTimeParts(date: Date, use24Hour: Bool) -> TimeParts {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
         if use24Hour {
-            formatter.dateFormat = "HH:mm"
-            return TimeParts(digits: formatter.string(from: date), period: nil)
+            return TimeParts(digits: Self.formatter24h.string(from: date), period: nil)
         } else {
-            formatter.dateFormat = "h:mm"
-            let digits = formatter.string(from: date)
-            formatter.dateFormat = "a"
-            let period = formatter.string(from: date)
+            let digits = Self.formatter12hDigits.string(from: date)
+            let period = Self.formatterPeriod.string(from: date)
             return TimeParts(digits: digits, period: period)
         }
     }
@@ -78,19 +103,20 @@ struct TimezoneService {
     func dayLabelParts(for date: Date, relativeTo reference: Date) -> DayLabelParts {
         let dayDifference = calendar.dateComponents([.day], from: calendar.startOfDay(for: reference), to: calendar.startOfDay(for: date)).day ?? 0
 
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "MMM d"
-        let dateStr = formatter.string(from: date)
+        let dateStr = Self.formatterDayLabel.string(from: date)
 
         let relative: String
         switch dayDifference {
-        case ..<0:
+        case ..<(-1):
+            relative = "\(-dayDifference)d ago"
+        case -1:
             relative = "Yesterday"
         case 0:
             relative = "Today"
-        default:
+        case 1:
             relative = "Tomorrow"
+        default:
+            relative = "+\(dayDifference)d"
         }
 
         return DayLabelParts(relative: relative, date: dateStr)

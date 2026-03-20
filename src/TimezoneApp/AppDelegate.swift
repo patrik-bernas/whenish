@@ -23,6 +23,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         startMenubarRefreshTimer()
     }
 
+    func applicationWillTerminate(_ notification: Notification) {
+        menubarRefreshTimer?.invalidate()
+        menubarRefreshTimer = nil
+    }
+
     func updateStatusItem(title: String?) {
         guard let button = statusItem.button else {
             return
@@ -147,6 +152,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
 
         // Fire once at the exact next minute, then repeat every 60s
         DispatchQueue.main.asyncAfter(deadline: .now() + delayToNextMinute) { [weak self] in
+            guard let self else { return }
             Task { @MainActor [weak self] in
                 self?.viewModel?.refreshMenubarTitle()
             }
@@ -156,7 +162,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
                 }
             }
             RunLoop.main.add(timer, forMode: .common)
-            self?.menubarRefreshTimer = timer
+            self.menubarRefreshTimer = timer
         }
     }
 }

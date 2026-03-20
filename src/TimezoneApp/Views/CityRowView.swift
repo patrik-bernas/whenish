@@ -4,7 +4,6 @@ struct CityRowView: View {
     @EnvironmentObject private var viewModel: TimezoneViewModel
 
     let city: City
-    let isLast: Bool
 
     @State private var isHovering = false
     @State private var isHoveringRemove = false
@@ -41,7 +40,7 @@ struct CityRowView: View {
 
                 // Timeline bar: flex — takes ALL remaining space
                 GeometryReader { geo in
-                    TimelineBarView(timeZone: viewModel.timeZone(for: city), scrubberOffset: viewModel.scrubberOffset, width: geo.size.width, height: 6, showsScrubLine: false)
+                    TimelineBarView(timeZone: viewModel.timeZone(for: city), scrubberOffset: viewModel.scrubberOffset, width: geo.size.width, height: 6)
                 }
                 .frame(maxWidth: .infinity)
                 .frame(height: 9)

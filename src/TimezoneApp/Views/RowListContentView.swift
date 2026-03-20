@@ -24,8 +24,8 @@ struct RowListContentView: View {
             ZStack(alignment: .topLeading) {
                 // City rows — fixed 52px each
                 VStack(spacing: 0) {
-                    ForEach(Array(cities.enumerated()), id: \.element.id) { index, city in
-                        CityRowView(city: city, isLast: index == cities.count - 1)
+                    ForEach(cities) { city in
+                        CityRowView(city: city)
                             .frame(height: rowHeight)
                     }
                 }

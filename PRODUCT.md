@@ -37,7 +37,7 @@ timezone-app/
 - **Signature features:**
   - Per-city color timeline bars (Available/Heads up/Sleeping in muted green/yellow/red)
   - Vertical scrub line connecting slider to all city timelines
-  - Switchable timezone groups (up to 3, pill buttons)
+  - Switchable timezone groups (up to 5, pill buttons)
   - Per-city menubar toggle dot (illuminated indigo / dim gray)
   - Home city indicator (📍 + "You" label + subtle glow)
   - Always-visible date labels (Today/Tomorrow/Yesterday) to prevent layout shift
@@ -52,7 +52,7 @@ timezone-app/
 - Must persist data across app restarts (UserDefaults or similar)
 - Must handle DST transitions correctly (use system timezone data, not hardcoded offsets)
 - Group names limited to 12 characters
-- Max 6 cities per group, max 3 groups
+- Max 5 cities per group, max 5 groups
 - 3–4 city limit for menubar compact display
 
 ## Design Reference Files
