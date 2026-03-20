@@ -1,4 +1,4 @@
-# PRODUCT.md — Timezone App
+# PRODUCT.md — Whenish
 
 ## What is this?
 A free, open-source macOS menubar timezone converter with a dark glassmorphism aesthetic. Users click the menubar icon to see a frosted-glass popover with their saved cities, organized into switchable groups, with visual availability timeline bars and a time scrubber.

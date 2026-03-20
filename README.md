@@ -1,4 +1,4 @@
-# Timezone App (Working Title)
+# Whenish
 
 A free, open-source macOS menubar timezone converter with a playful, visual design.
 
