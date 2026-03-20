@@ -38,7 +38,19 @@ struct PersistenceService {
             return groups
         }
 
-        return groups
+        // Refresh flags from current mapping — fixes persisted wrong flags from earlier versions
+        let refreshed = groups.map { group -> TimezoneGroup in
+            var g = group
+            g.cities = g.cities.map { city -> City in
+                let correct = citySearchService.result(for: city.timeZoneIdentifier)
+                var c = city
+                c.flag = correct.flag
+                c.countryCode = correct.countryCode
+                return c
+            }
+            return g
+        }
+        return refreshed
     }
 
     func saveSettings(_ settings: AppSettings) {

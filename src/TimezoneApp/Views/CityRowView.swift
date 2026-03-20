@@ -12,7 +12,7 @@ struct CityRowView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 6) {
-                // Flag: 18px font in 24px container
+                // Flag + home pin
                 ZStack(alignment: .bottomTrailing) {
                     Text(city.flag)
                         .font(.system(size: 18))
@@ -20,7 +20,7 @@ struct CityRowView: View {
 
                     if city.isHome {
                         Text("📍")
-                            .font(.system(size: 6))
+                            .font(.system(size: 7))
                     }
                 }
                 .frame(width: 24, height: 24)
@@ -62,9 +62,10 @@ struct CityRowView: View {
                     }
                     .lineLimit(1)
                     .fixedSize(horizontal: true, vertical: false)
-                    Text(viewModel.displayedDayLabel(for: city))
-                        .font(.system(size: 9, weight: viewModel.displayedDayLabel(for: city) == "Today" ? .regular : .medium))
-                        .foregroundStyle(viewModel.displayedDayLabel(for: city) == "Today" ? Color.white.opacity(0.2) : Color(red: 167 / 255, green: 180 / 255, blue: 1).opacity(0.55))
+                    let dayParts = viewModel.displayedDayLabelParts(for: city)
+                    Text("\(dayParts.relative), \(dayParts.date)")
+                        .font(.system(size: 9, weight: dayParts.isToday ? .regular : .medium))
+                        .foregroundStyle(dayParts.isToday ? Color.white.opacity(0.2) : Color(red: 167 / 255, green: 180 / 255, blue: 1).opacity(0.55))
                         .frame(height: 12)
                 }
                 .frame(width: 82, alignment: .trailing)

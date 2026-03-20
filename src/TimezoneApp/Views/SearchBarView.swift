@@ -45,21 +45,9 @@ struct SearchBarView: View {
                         .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
                 )
 
-                Button {
-                    viewModel.isSettingsOpen = true
-                } label: {
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundStyle(.white.opacity(0.35))
-                        .frame(width: 30, height: 30)
-                        .background(Color.white.opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
-                        )
-                }
-                .buttonStyle(.plain)
+                ViewToggleButton()
+                HomeCityPicker()
+                TimeFormatToggle()
             }
 
             if !viewModel.searchQuery.isEmpty {
@@ -109,6 +97,129 @@ struct SearchBarView: View {
                         .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
                 )
             }
+        }
+    }
+}
+
+private struct HomeCityPicker: View {
+    @EnvironmentObject private var viewModel: TimezoneViewModel
+    @State private var isHovering = false
+    @State private var showDropdown = false
+
+    var body: some View {
+        Button {
+            showDropdown.toggle()
+        } label: {
+            Text("📍")
+                .font(.system(size: 12))
+                .frame(width: 30, height: 30)
+                .background(Color.white.opacity(0.06))
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .stroke(Color.white.opacity(isHovering ? 0.15 : 0.08), lineWidth: 0.5)
+                )
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering in isHovering = hovering }
+        .overlay(alignment: .topTrailing) {
+            if showDropdown, let group = viewModel.activeGroup {
+                VStack(alignment: .leading, spacing: 0) {
+                    ForEach(Array(group.cities.enumerated()), id: \.element.id) { index, city in
+                        Button {
+                            viewModel.setHomeCity(city)
+                            showDropdown = false
+                        } label: {
+                            HStack(spacing: 6) {
+                                Text(city.flag)
+                                    .font(.system(size: 13))
+                                Text(city.name)
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundStyle(.white.opacity(0.8))
+                                Spacer()
+                                if city.isHome {
+                                    Image(systemName: "checkmark")
+                                        .font(.system(size: 10, weight: .semibold))
+                                        .foregroundStyle(.white.opacity(0.6))
+                                }
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+
+                        if index < group.cities.count - 1 {
+                            Rectangle()
+                                .fill(Color.white.opacity(0.06))
+                                .frame(height: 0.5)
+                                .padding(.horizontal, 8)
+                        }
+                    }
+                }
+                .frame(width: 180)
+                .background(Color(white: 0.12, opacity: 0.95))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(Color.white.opacity(0.1), lineWidth: 0.5)
+                )
+                .shadow(color: .black.opacity(0.3), radius: 12, y: 4)
+                .offset(y: 36)
+                .zIndex(100)
+            }
+        }
+    }
+}
+
+private struct TimeFormatToggle: View {
+    @EnvironmentObject private var viewModel: TimezoneViewModel
+    @State private var isHovering = false
+
+    var body: some View {
+        Button {
+            viewModel.toggle24HourFormat()
+        } label: {
+            Text(viewModel.settings.use24HourFormat ? "24h" : "12h")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(.white.opacity(isHovering ? 0.6 : 0.4))
+                .frame(width: 30, height: 30)
+                .background(Color.white.opacity(0.06))
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
+                )
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering in
+            isHovering = hovering
+        }
+    }
+}
+
+private struct ViewToggleButton: View {
+    @EnvironmentObject private var viewModel: TimezoneViewModel
+    @State private var isHovering = false
+
+    var body: some View {
+        Button {
+            viewModel.toggleColumnView()
+        } label: {
+            Image(systemName: viewModel.settings.isColumnView ? "chart.bar.fill" : "list.bullet")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(.white.opacity(isHovering ? 0.6 : 0.4))
+                .frame(width: 30, height: 30)
+                .background(Color.white.opacity(0.06))
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .stroke(Color.white.opacity(0.08), lineWidth: 0.5)
+                )
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering in
+            isHovering = hovering
         }
     }
 }

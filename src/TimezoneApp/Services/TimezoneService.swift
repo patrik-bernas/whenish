@@ -65,17 +65,35 @@ struct TimezoneService {
         return "\(sign)\(hours)h \(minutes)m"
     }
 
+    struct DayLabelParts {
+        let relative: String  // "Today", "Tomorrow", "Yesterday"
+        let date: String      // "Mar 20"
+        var isToday: Bool { relative == "Today" }
+    }
+
     func dayLabel(for date: Date, relativeTo reference: Date) -> String {
+        dayLabelParts(for: date, relativeTo: reference).relative
+    }
+
+    func dayLabelParts(for date: Date, relativeTo reference: Date) -> DayLabelParts {
         let dayDifference = calendar.dateComponents([.day], from: calendar.startOfDay(for: reference), to: calendar.startOfDay(for: date)).day ?? 0
 
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "MMM d"
+        let dateStr = formatter.string(from: date)
+
+        let relative: String
         switch dayDifference {
         case ..<0:
-            return "Yesterday"
+            relative = "Yesterday"
         case 0:
-            return "Today"
+            relative = "Today"
         default:
-            return "Tomorrow"
+            relative = "Tomorrow"
         }
+
+        return DayLabelParts(relative: relative, date: dateStr)
     }
 
     func availabilityState(for hour: Int) -> AvailabilityState {

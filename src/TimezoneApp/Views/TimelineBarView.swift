@@ -20,14 +20,30 @@ struct TimelineBarView: View {
             }
             .clipShape(Capsule())
 
+            // Dark plum "now" tick mark — fixed at center, always visible, 10px tall
             if showsScrubLine {
-                RoundedRectangle(cornerRadius: 0.5)
-                    .fill(Color.white.opacity(0.45))
-                    .frame(width: 1, height: 9)
-                    .offset(x: scrubX - 0.5)
+                Rectangle()
+                    .fill(Color(red: 0.231, green: 0.122, blue: 0.169))
+                    .frame(width: 2, height: 10)
+                    .offset(x: nowX - 1)
+                    .allowsHitTesting(false)
+
+                Rectangle()
+                    .fill(Color.white.opacity(0.5))
+                    .frame(width: 1.5, height: scrubLineHeight)
+                    .offset(x: scrubX - 0.75)
+                    .allowsHitTesting(false)
             }
         }
-        .frame(width: width, height: 9)
+        .frame(width: width, height: height)
+    }
+
+    /// Height of the scrub line — tall enough to visually bridge across rows
+    private let scrubLineHeight: CGFloat = 46
+
+    /// X position of "now" on the bar — always at center (offset 0 → normalized 0.5)
+    private var nowX: CGFloat {
+        (0.5 * width).rounded(.toNearestOrEven)
     }
 
     private var scrubX: CGFloat {
@@ -41,11 +57,11 @@ struct TimelineBarView: View {
         let localHour = Calendar.current.component(in: timeZone, from: slotDate)
         switch timezoneService.availabilityState(for: localHour) {
         case .available:
-            return Color(red: 52 / 255, green: 211 / 255, blue: 153 / 255).opacity(0.85)
+            return Color(red: 16/255, green: 185/255, blue: 129/255).opacity(0.85)
         case .headsUp:
-            return Color(red: 251 / 255, green: 191 / 255, blue: 36 / 255).opacity(0.80)
+            return Color(red: 251/255, green: 191/255, blue: 36/255).opacity(0.70)
         case .sleeping:
-            return Color(red: 248 / 255, green: 113 / 255, blue: 113 / 255).opacity(0.70)
+            return Color(red: 239/255, green: 68/255, blue: 68/255).opacity(0.55)
         }
     }
 }

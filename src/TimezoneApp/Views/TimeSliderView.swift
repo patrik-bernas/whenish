@@ -2,6 +2,7 @@ import SwiftUI
 
 struct TimeSliderView: View {
     @EnvironmentObject private var viewModel: TimezoneViewModel
+    var showSlider: Bool = true
 
     var body: some View {
         VStack(spacing: 0) {
@@ -10,12 +11,16 @@ struct TimeSliderView: View {
                 .frame(height: 0.5)
                 .padding(.horizontal, 18)
 
-            VStack(spacing: 4) {
+            VStack(spacing: 0) {
                 header
-                slider
-                footer
+                    .padding(.bottom, showSlider ? 4 : 0)
+                if showSlider {
+                    slider
+                        .padding(.bottom, 3)
+                    footer
+                }
             }
-            .padding(.top, 8)
+            .padding(.top, 6)
             .padding(.horizontal, 20)
             .padding(.bottom, 0)
         }
@@ -71,7 +76,7 @@ struct TimeSliderView: View {
 
                 if abs(clampedOffset) > 0.01 {
                     Rectangle()
-                        .fill(Color(red: 167 / 255, green: 180 / 255, blue: 1).opacity(0.5))
+                        .fill(Color(red: 0.231, green: 0.122, blue: 0.169))
                         .frame(width: 1.5, height: 12)
                         .offset(x: (trackWidth / 2) - 0.75)
                 }

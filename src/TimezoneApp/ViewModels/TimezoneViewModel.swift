@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 
 @MainActor
@@ -5,11 +6,11 @@ final class TimezoneViewModel: ObservableObject {
     static let shared = TimezoneViewModel()
 
     @Published var groups: [TimezoneGroup] {
-        didSet { persistGroupsAndRefreshState() }
+        didSet { scheduleGroupsPersist() }
     }
 
     @Published var settings: AppSettings {
-        didSet { persistSettingsAndRefreshState() }
+        didSet { scheduleSettingsPersist() }
     }
 
     @Published var activeGroupIndex: Int {
@@ -20,20 +21,24 @@ final class TimezoneViewModel: ObservableObject {
         }
     }
 
-    @Published var scrubberOffset: Double {
-        didSet { refreshStatusItemTitle() }
-    }
+    @Published var scrubberOffset: Double = 0
 
-    @Published var searchQuery: String = "" {
-        didSet { updateSearchResults() }
-    }
+    @Published var searchQuery: String = ""
 
     @Published private(set) var searchResults: [CitySearchResult] = []
-    @Published var isSettingsOpen = false
 
     private let persistenceService: PersistenceService
     private let timezoneService: TimezoneService
     private let citySearchService: CitySearchService
+
+    private var groupsPersistWorkItem: DispatchWorkItem?
+    private var settingsPersistWorkItem: DispatchWorkItem?
+    private var searchDebounceWorkItem: DispatchWorkItem?
+    private var cancellables = Set<AnyCancellable>()
+
+    // Cache sorted active group to avoid re-sorting on every access
+    private var cachedActiveGroupIndex: Int = -1
+    private var cachedSortedGroup: TimezoneGroup?
 
     init(
         persistenceService: PersistenceService? = nil,
@@ -51,24 +56,45 @@ final class TimezoneViewModel: ObservableObject {
         groups = loadedGroups
         settings = loadedSettings
         activeGroupIndex = initialIndex
-        scrubberOffset = 0
 
+        setupBindings()
         refreshStatusItemTitle()
     }
 
+    // MARK: - Computed properties
+
     var activeGroup: TimezoneGroup? {
         guard groups.indices.contains(activeGroupIndex) else { return nil }
-        var group = groups[activeGroupIndex]
-        group.cities.sort { city1, city2 in
+        let group = groups[activeGroupIndex]
+
+        // Return cached sorted version if the group hasn't changed
+        if activeGroupIndex == cachedActiveGroupIndex, let cached = cachedSortedGroup, cached.id == group.id, cached.cities.count == group.cities.count {
+            return cached
+        }
+
+        var sorted = group
+        sorted.cities.sort { city1, city2 in
             let tz1 = TimeZone(identifier: city1.timeZoneIdentifier) ?? .current
             let tz2 = TimeZone(identifier: city2.timeZoneIdentifier) ?? .current
             return tz1.secondsFromGMT() < tz2.secondsFromGMT()
         }
-        return group
+        cachedActiveGroupIndex = activeGroupIndex
+        cachedSortedGroup = sorted
+        return sorted
     }
 
     var menubarCities: [City] {
-        groups.flatMap(\.cities).filter(\.showInMenubar)
+        var seen = Set<String>()
+        var result = [City]()
+        for group in groups {
+            for city in group.cities where city.showInMenubar {
+                if !seen.contains(city.timeZoneIdentifier) {
+                    seen.insert(city.timeZoneIdentifier)
+                    result.append(city)
+                }
+            }
+        }
+        return Array(result.prefix(4))
     }
 
     var offsetLabel: String {
@@ -79,18 +105,39 @@ final class TimezoneViewModel: ObservableObject {
     }
 
     var currentLocalTimeString: String {
-        let date = timezoneService.currentTime(in: homeTimeZone, offsetHours: 0)
-        return timezoneService.formattedTime(date: date, use24Hour: settings.use24HourFormat)
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone.current
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = settings.use24HourFormat ? "HH:mm" : "h:mm a"
+        let result = formatter.string(from: Date())
+        print("[TimezoneApp] currentLocalTimeString — system TZ: \(TimeZone.current.identifier), home TZ: \(homeTimeZone.identifier), Date(): \(Date()), formatted: \(result)")
+        return result
     }
 
     var currentLocalTimeParts: TimezoneService.TimeParts {
-        let date = timezoneService.currentTime(in: homeTimeZone, offsetHours: 0)
-        return timezoneService.formattedTimeParts(date: date, use24Hour: settings.use24HourFormat)
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone.current
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        if settings.use24HourFormat {
+            formatter.dateFormat = "HH:mm"
+            let result = formatter.string(from: Date())
+            print("[TimezoneApp] currentLocalTimeParts — system TZ: \(TimeZone.current.identifier), formatted: \(result)")
+            return TimezoneService.TimeParts(digits: result, period: nil)
+        } else {
+            formatter.dateFormat = "h:mm"
+            let digits = formatter.string(from: Date())
+            formatter.dateFormat = "a"
+            let period = formatter.string(from: Date())
+            print("[TimezoneApp] currentLocalTimeParts — system TZ: \(TimeZone.current.identifier), formatted: \(digits) \(period)")
+            return TimezoneService.TimeParts(digits: digits, period: period)
+        }
     }
 
     var homeTimeZone: TimeZone {
         resolvedHomeTimeZone()
     }
+
+    // MARK: - Actions
 
     func addCity(_ result: CitySearchResult) {
         guard var group = activeGroup else { return }
@@ -139,16 +186,21 @@ final class TimezoneViewModel: ObservableObject {
         }
     }
 
+    func setHomeCity(_ city: City) {
+        setHomeTimezone(to: city.timeZoneIdentifier)
+    }
+
     func renameGroup(at index: Int, to name: String) {
         guard groups.indices.contains(index) else { return }
         groups[index].name = String(name.prefix(12))
     }
 
     func addGroup() {
-        guard groups.count < 3 else { return }
+        guard groups.count < 5 else { return }
         let defaultName = "Group \(groups.count + 1)"
         let newGroup = TimezoneGroup(name: defaultName)
         groups.append(newGroup)
+        activeGroupIndex = groups.count - 1
     }
 
     func deleteGroup(at index: Int) {
@@ -180,6 +232,12 @@ final class TimezoneViewModel: ObservableObject {
         return timezoneService.dayLabel(for: shiftedDate, relativeTo: referenceDate)
     }
 
+    func displayedDayLabelParts(for city: City) -> TimezoneService.DayLabelParts {
+        let shiftedDate = timezoneService.currentTime(in: timeZone(for: city), offsetHours: scrubberOffset)
+        let referenceDate = timezoneService.currentTime(in: timeZone(for: city), offsetHours: 0)
+        return timezoneService.dayLabelParts(for: shiftedDate, relativeTo: referenceDate)
+    }
+
     func relativeOffsetLabel(for city: City) -> String {
         guard let homeIdentifier = settings.homeTimeZoneIdentifier,
               let homeTimeZone = TimeZone(identifier: homeIdentifier) else {
@@ -193,12 +251,31 @@ final class TimezoneViewModel: ObservableObject {
         scrubberOffset = 0
     }
 
+    func toggle24HourFormat() {
+        settings.use24HourFormat.toggle()
+    }
+
+    func toggleColumnView() {
+        settings.isColumnView.toggle()
+    }
+
     func refreshMenubarTitle() {
         refreshStatusItemTitle()
     }
 
-    private func updateSearchResults() {
-        searchResults = citySearchService.search(query: searchQuery)
+    // MARK: - Private
+
+    private func setupBindings() {
+        // Debounce search — 200ms after user stops typing
+        $searchQuery
+            .debounce(for: .milliseconds(200), scheduler: RunLoop.main)
+            .sink { [weak self] query in
+                self?.searchResults = self?.citySearchService.search(query: query) ?? []
+            }
+            .store(in: &cancellables)
+
+        // Note: menubar always shows real current time — NOT affected by scrubber offset.
+        // Scrubber only affects times shown inside the popover.
     }
 
     private func updateActiveGroup(_ group: TimezoneGroup) {
@@ -206,33 +283,70 @@ final class TimezoneViewModel: ObservableObject {
         groups[activeGroupIndex] = group
     }
 
-    private func persistGroupsAndRefreshState() {
-        persistenceService.saveGroups(groups)
-        if groups.indices.contains(activeGroupIndex) {
-            settings.activeGroupId = groups[activeGroupIndex].id
+    /// Debounce groups persistence — coalesce rapid mutations (e.g. drag, rename typing)
+    private func scheduleGroupsPersist() {
+        cachedSortedGroup = nil // Invalidate cache
+
+        groupsPersistWorkItem?.cancel()
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self else { return }
+            self.persistenceService.saveGroups(self.groups)
+            if self.groups.indices.contains(self.activeGroupIndex) {
+                self.settings.activeGroupId = self.groups[self.activeGroupIndex].id
+            }
+            self.refreshStatusItemTitle()
         }
-        refreshStatusItemTitle()
+        groupsPersistWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: workItem)
     }
 
-    private func persistSettingsAndRefreshState() {
-        persistenceService.saveSettings(settings)
-        refreshStatusItemTitle()
+    /// Debounce settings persistence
+    private func scheduleSettingsPersist() {
+        settingsPersistWorkItem?.cancel()
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self else { return }
+            self.persistenceService.saveSettings(self.settings)
+            self.refreshStatusItemTitle()
+        }
+        settingsPersistWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: workItem)
     }
 
     private func refreshStatusItemTitle() {
-        let title = menubarCities
-            .prefix(4)
-            .map { city in
-                let date = timezoneService.currentTime(
-                    in: TimeZone(identifier: city.timeZoneIdentifier) ?? .current,
-                    offsetHours: scrubberOffset
-                )
-                let time = timezoneService.formattedTime(date: date, use24Hour: settings.use24HourFormat)
+        let now = Date()
+        let cities = menubarCities
+
+        let title = cities
+            .map { city -> String in
+                let formatter = DateFormatter()
+                formatter.timeZone = TimeZone(identifier: city.timeZoneIdentifier) ?? .current
+                formatter.locale = Locale(identifier: "en_US_POSIX")
+                formatter.dateFormat = settings.use24HourFormat ? "HH:mm" : "h:mm a"
+                let time = formatter.string(from: now)
                 return "\(abbreviation(for: city.name)) \(time)"
             }
             .joined(separator: " · ")
 
+        // Build column-aligned tooltip
+        let maxNameLength = cities.map { $0.name.count }.max() ?? 10
+        let tooltipText = cities.map { city -> String in
+            let formatter = DateFormatter()
+            formatter.timeZone = TimeZone(identifier: city.timeZoneIdentifier) ?? .current
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+
+            let name = city.name.padding(toLength: maxNameLength + 2, withPad: " ", startingAt: 0)
+
+            formatter.dateFormat = settings.use24HourFormat ? "HH:mm" : "h:mm a"
+            let time = formatter.string(from: now).padding(toLength: 8, withPad: " ", startingAt: 0)
+
+            formatter.dateFormat = "EEE, MMM d"
+            let date = formatter.string(from: now)
+
+            return "\(name)\(time)  \(date)"
+        }.joined(separator: "\n")
+
         AppDelegate.shared?.updateStatusItem(title: title)
+        AppDelegate.shared?.updateStatusItemTooltip(tooltip: tooltipText)
     }
 
     private func abbreviation(for cityName: String) -> String {
@@ -244,7 +358,7 @@ final class TimezoneViewModel: ObservableObject {
             "London": "LON",
             "Tokyo": "TYO",
             "Sydney": "SYD",
-            "New York": "NYC"
+            "New York": "NYC",
         ]
 
         if let custom = customAbbreviations[cityName] {
