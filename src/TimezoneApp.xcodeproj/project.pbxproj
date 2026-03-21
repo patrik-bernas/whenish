@@ -7,30 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A100003B0000000000000001 /* cities.json in Resources */ = {isa = PBXBuildFile; fileRef = A100003C0000000000000001 /* cities.json */; };
-		A100003A0000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000390000000000000001 /* Assets.xcassets */; };
-		A10000370000000000000001 /* ColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000360000000000000001 /* ColumnView.swift */; };
-		A10000310000000000000001 /* CityRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000300000000000000001 /* CityRowView.swift */; };
-		A10000380000000000000001 /* SharedBottomSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000380000000000000002 /* SharedBottomSection.swift */; };
-		A100003E0000000000000001 /* RowListContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100003E0000000000000002 /* RowListContentView.swift */; };
-		A100002F0000000000000001 /* TimelineBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002E0000000000000001 /* TimelineBarView.swift */; };
-		A100002D0000000000000001 /* GroupPillsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002C0000000000000001 /* GroupPillsView.swift */; };
-		A100002B0000000000000001 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002A0000000000000001 /* SearchBarView.swift */; };
-		A10000280000000000000001 /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000270000000000000001 /* PopoverView.swift */; };
-		A10000250000000000000001 /* TimezoneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000240000000000000001 /* TimezoneViewModel.swift */; };
-		A10000230000000000000001 /* CitySearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000220000000000000001 /* CitySearchService.swift */; };
-		A10000210000000000000001 /* TimezoneService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000200000000000000001 /* TimezoneService.swift */; };
-		A100001E0000000000000001 /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001D0000000000000001 /* PersistenceService.swift */; };
+		A100000D0000000000000001 /* TimezoneAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000A0000000000000001 /* TimezoneAppApp.swift */; };
+		A10000140000000000000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000150000000000000001 /* AppDelegate.swift */; };
 		A10000190000000000000001 /* City.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000160000000000000001 /* City.swift */; };
 		A100001A0000000000000001 /* TimezoneGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000170000000000000001 /* TimezoneGroup.swift */; };
 		A100001B0000000000000001 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000180000000000000001 /* AppSettings.swift */; };
-		A10000140000000000000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000150000000000000001 /* AppDelegate.swift */; };
-		A100000D0000000000000001 /* TimezoneAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100000A0000000000000001 /* TimezoneAppApp.swift */; };
+		A100001E0000000000000001 /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100001D0000000000000001 /* PersistenceService.swift */; };
+		A10000210000000000000001 /* TimezoneService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000200000000000000001 /* TimezoneService.swift */; };
+		A10000230000000000000001 /* CitySearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000220000000000000001 /* CitySearchService.swift */; };
+		A10000250000000000000001 /* TimezoneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000240000000000000001 /* TimezoneViewModel.swift */; };
+		A10000280000000000000001 /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000270000000000000001 /* PopoverView.swift */; };
+		A100002B0000000000000001 /* SearchBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002A0000000000000001 /* SearchBarView.swift */; };
+		A100002D0000000000000001 /* GroupPillsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002C0000000000000001 /* GroupPillsView.swift */; };
+		A100002F0000000000000001 /* TimelineBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002E0000000000000001 /* TimelineBarView.swift */; };
+		A10000310000000000000001 /* CityRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000300000000000000001 /* CityRowView.swift */; };
+		A10000370000000000000001 /* ColumnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000360000000000000001 /* ColumnView.swift */; };
+		A10000380000000000000001 /* SharedBottomSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000380000000000000002 /* SharedBottomSection.swift */; };
+		A100003A0000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A10000390000000000000001 /* Assets.xcassets */; };
+		A100003B0000000000000001 /* cities.json in Resources */ = {isa = PBXBuildFile; fileRef = A100003C0000000000000001 /* cities.json */; };
+		A100003E0000000000000001 /* RowListContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100003E0000000000000002 /* RowListContentView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A10000030000000000000001 /* TimezoneApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimezoneApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A10000390000000000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A100000A0000000000000001 /* TimezoneAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimezoneAppApp.swift; sourceTree = "<group>"; };
 		A100000B0000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A10000150000000000000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -45,11 +44,12 @@
 		A100002A0000000000000001 /* SearchBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarView.swift; sourceTree = "<group>"; };
 		A100002C0000000000000001 /* GroupPillsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupPillsView.swift; sourceTree = "<group>"; };
 		A100002E0000000000000001 /* TimelineBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineBarView.swift; sourceTree = "<group>"; };
-		A10000360000000000000001 /* ColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColumnView.swift; sourceTree = "<group>"; };
 		A10000300000000000000001 /* CityRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityRowView.swift; sourceTree = "<group>"; };
+		A10000360000000000000001 /* ColumnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColumnView.swift; sourceTree = "<group>"; };
 		A10000380000000000000002 /* SharedBottomSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedBottomSection.swift; sourceTree = "<group>"; };
-		A100003E0000000000000002 /* RowListContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowListContentView.swift; sourceTree = "<group>"; };
+		A10000390000000000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A100003C0000000000000001 /* cities.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = cities.json; sourceTree = "<group>"; };
+		A100003E0000000000000002 /* RowListContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowListContentView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,14 +95,6 @@
 			path = TimezoneApp;
 			sourceTree = "<group>";
 		};
-		A100003D0000000000000001 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				A100003C0000000000000001 /* cities.json */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		A100001C0000000000000001 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -144,6 +136,14 @@
 				A100002E0000000000000001 /* TimelineBarView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		A100003D0000000000000001 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A100003C0000000000000001 /* cities.json */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -203,7 +203,7 @@
 		A100000C0000000000000001 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
-		files = (
+			files = (
 				A100003A0000000000000001 /* Assets.xcassets in Resources */,
 				A100003B0000000000000001 /* cities.json in Resources */,
 			);
@@ -282,11 +282,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XM37WDHL22;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TimezoneApp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -306,11 +307,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = XM37WDHL22;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TimezoneApp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
