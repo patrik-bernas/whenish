@@ -59,9 +59,6 @@ Contributions are welcome! Please open an issue first to discuss what you'd like
 
 MIT License — see [LICENSE](LICENSE) for details.
 
-## Acknowledgments
-
-Inspired by [Pretty Timezones](https://prettytimezones.com) by [@ky__zo](https://x.com/ky__zo).
 
 ---
 
