@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Whenish — See the world's time at a glance</title>
+  <meta name="description" content="A free, open-source menubar app for macOS that lets you see the world's time at a glance.">
+  <meta property="og:title" content="Whenish — See the world's time at a glance">
+  <meta property="og:description" content="A free, open-source menubar app for macOS that lets you see the world's time at a glance.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://patrik-bernas.github.io/whenish/">
+  <meta property="og:image" content="https://patrik-bernas.github.io/whenish/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Whenish — See the world's time at a glance">
+  <meta name="twitter:description" content="A free, open-source menubar app for macOS that lets you see the world's time at a glance.">
+  <meta name="twitter:image" content="https://patrik-bernas.github.io/whenish/og-image.png">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🕐</text></svg>">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(160deg, #1a1520 0%, #2d2235 25%, #1e2a3a 50%, #1a2332 75%, #151820 100%);
+      color: white;
+    }
+    a { text-decoration: none; }
+
+    /* Star canvas */
+    #starCanvas {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 1;
+    }
+
+    /* Cloud layer */
+    #cloudMount {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none; z-index: 3;
+    }
+    #cloudMount canvas {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    }
+
+    /* Ambient blobs */
+    .blob {
+      position: absolute; border-radius: 50%; pointer-events: none;
+    }
+    .blob-1 {
+      top: 5%; left: 15%; width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%);
+      filter: blur(80px);
+    }
+    .blob-2 {
+      bottom: 30%; right: 10%; width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%);
+      filter: blur(60px);
+    }
+
+    /* Content */
+    #content {
+      position: relative; z-index: 10; width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center;
+      padding-top: clamp(60px, 12vh, 140px); gap: 18px;
+    }
+
+    h1 {
+      font-size: clamp(24px, 4vw, 40px); font-weight: 700;
+      color: rgba(255,255,255,0.95); letter-spacing: -0.025em; line-height: 1.1;
+    }
+    .tagline {
+      font-size: clamp(12px, 1.5vw, 15px); color: rgba(255,255,255,0.4);
+      margin: 8px 0 0; font-weight: 400; line-height: 1.4;
+    }
+
+    /* Buttons */
+    .btn-row { display: flex; gap: 10px; justify-content: center; margin-top: 18px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 7px; padding: 9px 0; width: 170px; border-radius: 10px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: all 0.25s ease; font-family: inherit; border: none;
+    }
+    .btn-primary {
+      background: rgba(255,255,255,0.92); color: #1a1520;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    }
+    .btn-primary:hover { background: white; box-shadow: 0 6px 24px rgba(255,255,255,0.15); transform: translateY(-1px); }
+    .btn-secondary {
+      background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.8);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.12); transform: translateY(-1px); }
+
+    /* Footer */
+    #footer {
+      position: fixed; bottom: 14px; left: 0; right: 0;
+      text-align: center; font-size: 10px; color: rgba(255,255,255,0.12); z-index: 10;
+    }
+    #footer a { color: rgba(255,255,255,0.12); text-decoration: none; transition: text-decoration-color 0.2s; }
+    #footer a:hover { text-decoration: underline; text-decoration-color: rgba(255,255,255,0.2); text-underline-offset: 2px; }
+
+    /* App demo */
+    .app-card {
+      width: 290px; max-width: 85vw;
+      background: rgba(22,18,32,0.5);
+      backdrop-filter: blur(50px) saturate(1.5);
+      -webkit-backdrop-filter: blur(50px) saturate(1.5);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.07);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset, 0 1px 0 rgba(255,255,255,0.06) inset, 0 0 100px rgba(100,60,180,0.04);
+      padding: 12px 13px 11px;
+      display: flex; flex-direction: column; position: relative; overflow: hidden;
+    }
+    .app-card-glow {
+      position: absolute; top: 0; left: 0; right: 0; height: 80px;
+      background: linear-gradient(180deg, rgba(90,60,140,0.07) 0%, transparent 100%);
+      pointer-events: none; border-radius: 16px 16px 0 0;
+    }
+    .search-bar {
+      display: flex; align-items: center; gap: 7px;
+      background: rgba(255,255,255,0.05); border-radius: 8px;
+      padding: 6px 10px; position: relative; z-index: 1;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .search-bar span { font-size: 11px; color: rgba(255,255,255,0.2); flex: 1; }
+    .search-bar button {
+      width: 22px; height: 22px; border-radius: 6px; border: none;
+      background: rgba(255,255,255,0.06); display: flex; align-items: center;
+      justify-content: center; cursor: pointer; padding: 0;
+    }
+    .group-pills {
+      display: flex; gap: 4px; justify-content: center;
+      position: relative; z-index: 1; margin: 10px 0 12px;
+    }
+    .pill {
+      font-size: 10px; padding: 3px 14px; border-radius: 18px;
+      cursor: pointer; font-family: inherit; transition: all 0.2s ease;
+    }
+    .pill-active { background: rgba(255,255,255,0.92); color: #1a1520; border: 1px solid transparent; font-weight: 700; }
+    .pill-inactive { background: transparent; color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.1); font-weight: 400; }
+
+    .city-list { display: flex; flex-direction: column; gap: 11px; position: relative; z-index: 1; }
+    .city-row { display: flex; align-items: center; justify-content: space-between; }
+    .city-left { display: flex; align-items: center; gap: 8px; }
+    .city-flag { font-size: 16px; width: 22px; text-align: center; }
+    .city-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.88); }
+    .city-abbr { font-size: 9px; color: rgba(255,255,255,0.3); margin-top: 1px; }
+    .city-right { display: flex; align-items: center; gap: 7px; }
+    .city-time {
+      font-size: 18px; font-weight: 600; color: rgba(255,255,255,0.92);
+      font-variant-numeric: tabular-nums; letter-spacing: -0.02em; line-height: 1;
+    }
+    .city-day { font-size: 8px; color: rgba(255,255,255,0.3); margin-top: 1px; text-align: right; }
+    .city-dot { width: 7px; height: 7px; border-radius: 50%; opacity: 0.85; }
+
+    .timeline { position: relative; height: 4px; border-radius: 2px; overflow: visible; margin-top: 3px; }
+    .timeline-track { display: flex; height: 100%; border-radius: 2px; overflow: hidden; }
+    .timeline-seg { flex: 1; opacity: 0.5; }
+    .timeline-needle {
+      position: absolute; top: -2px; width: 1.5px; height: 8px;
+      background: rgba(255,255,255,0.7); border-radius: 1px;
+      transform: translateX(-0.75px); transition: left 0.1s ease;
+    }
+
+    .scrub-section { position: relative; z-index: 1; margin-top: 14px; }
+    .scrub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .scrub-label { font-size: 9px; color: rgba(255,255,255,0.35); }
+    .scrub-time-wrap { display: flex; align-items: center; gap: 4px; }
+    .scrub-clock { font-size: 9px; color: rgba(255,255,255,0.3); }
+    .scrub-time { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); font-variant-numeric: tabular-nums; }
+    .scrub-row { display: flex; align-items: center; gap: 5px; }
+    .scrub-bound { font-size: 7px; color: rgba(255,255,255,0.25); min-width: 16px; }
+    .scrub-bound-right { text-align: right; }
+
+    input[type="range"] {
+      width: 100%; appearance: none; -webkit-appearance: none;
+      background: transparent; cursor: pointer; height: 18px; margin: 0;
+    }
+    input[type="range"]::-webkit-slider-track {
+      height: 2px; background: rgba(255,255,255,0.08); border-radius: 1px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
+      background: white; margin-top: -6px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.1);
+    }
+    input[type="range"]::-moz-range-track {
+      height: 2px; background: rgba(255,255,255,0.08); border-radius: 1px; border: none;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 14px; height: 14px; border-radius: 50%; background: white; border: none;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.1);
+    }
+
+    .legend {
+      display: flex; gap: 8px; justify-content: center; margin-top: 6px;
+      padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.04);
+    }
+    .legend-item { display: flex; gap: 3px; align-items: center; }
+    .legend-dot { width: 4px; height: 4px; border-radius: 50%; opacity: 0.8; }
+    .legend-label { font-size: 8px; color: rgba(255,255,255,0.3); }
+
+    @media (max-width: 420px) {
+      .btn { width: 150px; font-size: 12px; padding: 8px 0; }
+      .tagline { white-space: normal; padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <canvas id="starCanvas"></canvas>
+  <div id="cloudMount"></div>
+
+  <div id="content">
+    <div style="text-align:center">
+      <h1>Whenish</h1>
+      <p class="tagline">See the world's time at a glance. A free, open-source timezone converter for your macOS menubar.</p>
+      <div class="btn-row">
+        <a href="https://github.com/patrik-bernas/whenish/releases/latest" class="btn btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download for Mac
+        </a>
+        <a href="https://github.com/patrik-bernas/whenish" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
+          Star on GitHub
+        </a>
+      </div>
+    </div>
+    <div id="appDemo"></div>
+  </div>
+
+  <div id="footer">
+    Free &amp; Open Source · Made With Care · <a href="https://x.com/PatrikBernas" target="_blank" rel="noopener noreferrer">Feedback &amp; Support</a>
+  </div>
+
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  <script>
+  // ===== DATA =====
+  const CITIES = [
+    { id: 1, name: "Seoul", flag: "\u{1F1F0}\u{1F1F7}", offset: 9, abbr: "+1h" },
+    { id: 2, name: "Bali", flag: "\u{1F1EE}\u{1F1E9}", offset: 8, abbr: "Same" },
+    { id: 3, name: "Amsterdam", flag: "\u{1F1F3}\u{1F1F1}", offset: 1, abbr: "-7h" },
+    { id: 4, name: "San Francisco", flag: "\u{1F1FA}\u{1F1F8}", offset: -8, abbr: "-16h" },
+  ];
+  const GROUPS = ["Work", "Family", "Travel"];
+
+  function getTimeForOffset(o, s) {
+    const n = new Date();
+    return new Date(n.getTime() + n.getTimezoneOffset() * 60000 + o * 3600000 + s * 3600000);
+  }
+  function formatTime(d, h) {
+    return h ? d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })
+             : d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+  }
+  function getStatus(h) {
+    return h >= 9 && h < 17 ? "working" : (h >= 7 && h < 9 || h >= 17 && h < 21) ? "headsup" : "sleeping";
+  }
+  function statusColor(s) {
+    return s === "working" ? "#4ade80" : s === "headsup" ? "#e2b944" : "#c45c5c";
+  }
+  function getDayLabel(d) {
+    const n = new Date(), t = new Date(n.getFullYear(), n.getMonth(), n.getDate()),
+          c = new Date(d.getFullYear(), d.getMonth(), d.getDate()),
+          diff = Math.round((c - t) / 86400000);
+    return diff === 0 ? "Today" : diff === 1 ? "Tomorrow" : diff === -1 ? "Yesterday"
+         : d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  }
+
+  // ===== STAR FIELD =====
+  (function initStars() {
+    const c = document.getElementById("starCanvas");
+    const ctx = c.getContext("2d");
+    const dpr = window.devicePixelRatio || 1;
+    let W, H;
+    const stars = [];
+    const shooting = [];
+    let lastShoot = 0, nextDelay = 5000;
+
+    function resize() {
+      W = window.innerWidth; H = window.innerHeight;
+      c.width = W * dpr; c.height = H * dpr;
+      c.style.width = W + "px"; c.style.height = H + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    for (let i = 0; i < 400; i++) {
+      const b = Math.random() > 0.91;
+      stars.push({
+        x: Math.random(), y: Math.random() * 0.65,
+        r: b ? Math.random() * 1.6 + 0.8 : Math.random() * 1.0 + 0.15,
+        ba: b ? Math.random() * 0.35 + 0.5 : Math.random() * 0.4 + 0.1,
+        ph: Math.random() * Math.PI * 2,
+        sp: Math.random() * 0.008 + 0.003, b
+      });
+    }
+
+    resize();
+    window.addEventListener("resize", resize);
+
+    function cb() { return { l: W / 2 - 200, r: W / 2 + 200, t: H * 0.12, b: H * 0.72 }; }
+    function ic(x, y) { const b = cb(); return x > b.l - 30 && x < b.r + 30 && y > b.t - 15 && y < b.b + 15; }
+
+    function spawn(t) {
+      let sx, sy;
+      for (let i = 0; i < 10; i++) { sx = Math.random() * W; sy = Math.random() * H * 0.55; if (!ic(sx, sy)) break; }
+      const type = Math.random();
+      let sW, eW, sA, eA, sG, eG, sp, len, dc;
+      if (type < 0.25) {
+        sW = 0.5 + Math.random() * 0.3; eW = sW;
+        sA = 0.3 + Math.random() * 0.15; eA = sA;
+        sG = 1.5; eG = 1.5;
+        sp = 0.5 + Math.random() * 0.6; len = 30 + Math.random() * 25;
+        dc = 0.0015 + Math.random() * 0.002;
+      } else if (type < 0.50) {
+        sW = 1.0 + Math.random() * 0.6; eW = sW;
+        sA = 0.5 + Math.random() * 0.25; eA = sA;
+        sG = 2.5 + Math.random() * 1.5; eG = sG;
+        sp = 1.5 + Math.random() * 2.0; len = 55 + Math.random() * 50;
+        dc = 0.003 + Math.random() * 0.004;
+      } else if (type < 0.70) {
+        sW = 1.5 + Math.random() * 1.0; eW = sW;
+        sA = 0.75 + Math.random() * 0.25; eA = sA;
+        sG = 4 + Math.random() * 3; eG = sG;
+        sp = 4.0 + Math.random() * 3.0; len = 80 + Math.random() * 60;
+        dc = 0.012 + Math.random() * 0.01;
+      } else if (type < 0.85) {
+        sW = 0.3; eW = 2.8 + Math.random() * 1.5;
+        sA = 0.2; eA = 0.9;
+        sG = 0.8; eG = 7 + Math.random() * 3;
+        sp = 1.0 + Math.random() * 1.5; len = 35 + Math.random() * 50;
+        dc = 0.002 + Math.random() * 0.002;
+      } else {
+        sW = 2.2 + Math.random() * 1.5; eW = 0.2;
+        sA = 0.85; eA = 0.08;
+        sG = 6 + Math.random() * 3; eG = 0.5;
+        sp = 1.5 + Math.random() * 2.0; len = 60 + Math.random() * 50;
+        dc = 0.002 + Math.random() * 0.002;
+      }
+      const ang = (Math.random() * 0.7 + 0.15) * Math.PI * (Math.random() > 0.5 ? 1 : -1) + Math.PI * 0.1;
+      shooting.push({ x: sx, y: sy, a: ang, sp, l: len, sW, eW, sA, eA, sG, eG, life: 1, dc, born: t });
+      nextDelay = 2000 + Math.random() * 3000;
+    }
+
+    function draw(t) {
+      ctx.clearRect(0, 0, W, H);
+      for (const s of stars) {
+        const px = s.x * W, py = s.y * H, tw = Math.sin(t * s.sp + s.ph) * 0.3 + 0.7, al = s.ba * tw;
+        ctx.beginPath(); ctx.arc(px, py, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = s.b ? `rgba(200,210,255,${al})` : `rgba(180,190,220,${al * 0.7})`; ctx.fill();
+        if (s.b) {
+          const g = ctx.createRadialGradient(px, py, 0, px, py, s.r * 3);
+          g.addColorStop(0, `rgba(200,210,255,${al * 0.25})`); g.addColorStop(1, "transparent");
+          ctx.beginPath(); ctx.arc(px, py, s.r * 3, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
+        }
+      }
+      if (t - lastShoot > nextDelay) { spawn(t); lastShoot = t; }
+      let alive = [];
+      for (const ss of shooting) {
+        ss.life -= ss.dc; if (ss.life <= 0) continue; alive.push(ss);
+        const prog = 1.0 - ss.life;
+        const el = t - ss.born, dist = el * ss.sp * 0.04;
+        const dx = Math.cos(ss.a), dy = Math.sin(ss.a);
+        const hx = ss.x + dx * dist, hy = ss.y + dy * dist;
+        if (ic(hx, hy)) continue;
+        const cW = ss.sW + (ss.eW - ss.sW) * prog;
+        const cA = ss.sA + (ss.eA - ss.sA) * prog;
+        const cG = ss.sG + (ss.eG - ss.sG) * prog;
+        const cL = ss.l * (0.3 + cW / 2.0);
+        const tx = hx - dx * cL * ss.life, ty = hy - dy * cL * ss.life;
+        const gr = ctx.createLinearGradient(tx, ty, hx, hy);
+        gr.addColorStop(0, "rgba(255,255,255,0)");
+        gr.addColorStop(0.5, `rgba(190,210,255,${ss.life * cA * 0.3})`);
+        gr.addColorStop(0.85, `rgba(220,230,255,${ss.life * cA * 0.7})`);
+        gr.addColorStop(1, `rgba(255,255,255,${ss.life * cA})`);
+        ctx.save(); ctx.lineCap = "round"; ctx.strokeStyle = gr;
+        ctx.lineWidth = Math.max(0.3, cW * ss.life);
+        ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(hx, hy); ctx.stroke();
+        const gw = Math.max(1, cG);
+        const hg = ctx.createRadialGradient(hx, hy, 0, hx, hy, gw);
+        hg.addColorStop(0, `rgba(255,255,255,${ss.life * cA * 0.7})`);
+        hg.addColorStop(0.5, `rgba(200,220,255,${ss.life * cA * 0.2})`);
+        hg.addColorStop(1, "transparent");
+        ctx.fillStyle = hg; ctx.beginPath(); ctx.arc(hx, hy, gw, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      }
+      shooting.length = 0; shooting.push(...alive);
+      requestAnimationFrame(draw);
+    }
+
+    const now = performance.now();
+    spawn(now); spawn(now); spawn(now);
+    requestAnimationFrame(draw);
+  })();
+
+  // ===== CLOUD SHADER =====
+  (function initClouds() {
+    const el = document.getElementById("cloudMount");
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false, powerPreference: "default" });
+    renderer.setSize(el.clientWidth, el.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setClearColor(0x000000, 0);
+    el.appendChild(renderer.domElement);
+    Object.assign(renderer.domElement.style, { position: "absolute", top: "0", left: "0", width: "100%", height: "100%" });
+
+    const vertShader = `
+    varying vec2 vUv;
+    void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
+
+    const fragShader = `
+    precision highp float;
+    varying vec2 vUv;
+    uniform float uTime;
+    uniform vec2 uRes;
+    float hash(float n) { return fract(sin(n) * 43758.5453123); }
+    float noise3D(vec3 p) {
+      vec3 i = floor(p); vec3 f = fract(p); f = f * f * (3.0 - 2.0 * f);
+      float n = i.x + i.y * 157.0 + 113.0 * i.z;
+      return mix(mix(mix(hash(n), hash(n+1.0), f.x), mix(hash(n+157.0), hash(n+158.0), f.x), f.y),
+                 mix(mix(hash(n+113.0), hash(n+114.0), f.x), mix(hash(n+270.0), hash(n+271.0), f.x), f.y), f.z);
+    }
+    float fbm(vec3 p) {
+      float v = 0.0, a = 0.5; vec3 shift = vec3(100.0);
+      for (int i = 0; i < 5; i++) { v += a * noise3D(p); p = p * 2.0 + shift; a *= 0.5; }
+      return v;
+    }
+    float cloudDensity(vec3 p) {
+      vec3 q = p + vec3(uTime * 0.04, 0.0, uTime * 0.02);
+      float base = fbm(q * 0.4), detail = fbm(q * 1.2 + vec3(3.7, 1.3, 5.1));
+      float density = base - 0.15 - detail * 0.3;
+      float heightGrad = smoothstep(0.0, 0.25, p.y) * smoothstep(1.0, 0.4, p.y);
+      return clamp(density * heightGrad, 0.0, 1.0);
+    }
+    vec4 raymarchClouds(vec2 uv) {
+      float x = uv.x;
+      float cloudMax = 0.21 + 0.015*sin(x*5.0+0.8) + 0.012*sin(x*8.5+3.2) + 0.008*cos(x*13.0+1.5);
+      cloudMax = clamp(cloudMax, 0.17, 0.25);
+      float fadeZone = 0.08;
+      if (uv.y > cloudMax + fadeZone) return vec4(0.0);
+      float cloudNorm = uv.y / cloudMax;
+      vec3 ro = vec3(uv.x * 8.0 - 4.0, 1.8, 0.0);
+      vec3 rd = normalize(vec3(0.0, -1.0, 0.6));
+      float depthFactor = 1.0 - clamp(cloudNorm, 0.0, 1.0);
+      ro.y -= depthFactor * 1.2; ro.z += depthFactor * 3.0;
+      vec4 sum = vec4(0.0); float t = 0.0;
+      for (int i = 0; i < 50; i++) {
+        if (sum.a > 0.95) break;
+        vec3 pos = ro + rd * t;
+        vec3 sp = vec3(pos.x, clamp((pos.y + 0.5) * 0.7, 0.0, 1.0), pos.z);
+        float d = cloudDensity(sp);
+        if (d > 0.01) {
+          vec3 lightDir = normalize(vec3(0.2, 1.0, 0.15));
+          float lightSample = cloudDensity(sp + lightDir * 0.25);
+          float beer = exp(-lightSample * 2.5), powder = 1.0 - exp(-d * 5.0);
+          float lightEnergy = beer * powder * 2.2;
+          vec3 darkCol = vec3(0.04, 0.06, 0.14), midCol = vec3(0.10, 0.15, 0.28);
+          vec3 lightCol = vec3(0.28, 0.38, 0.58), brightCol = vec3(0.42, 0.52, 0.72);
+          vec3 col = mix(darkCol, midCol, lightEnergy * 0.5);
+          col = mix(col, lightCol, lightEnergy * 0.8);
+          col += brightCol * pow(lightEnergy, 3.0) * 0.25;
+          float alpha = d * 0.4; col *= alpha;
+          sum += vec4(col, alpha) * (1.0 - sum.a);
+        }
+        t += 0.10;
+      }
+      float topFade = smoothstep(cloudMax + fadeZone, cloudMax - 0.05, uv.y);
+      sum *= topFade;
+      float bottomFade = smoothstep(0.0, 0.04, uv.y);
+      sum.rgb *= bottomFade;
+      sum.rgb += vec3(0.04, 0.04, 0.06) * (1.0 - bottomFade) * sum.a;
+      return sum;
+    }
+    void main() { gl_FragColor = raymarchClouds(vUv); }`;
+
+    const uniforms = { uTime: { value: 0 }, uRes: { value: new THREE.Vector2(el.clientWidth, el.clientHeight) } };
+    const mat = new THREE.ShaderMaterial({ vertexShader: vertShader, fragmentShader: fragShader, uniforms, transparent: true, depthWrite: false });
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), mat);
+    scene.add(mesh);
+
+    const t0 = Date.now();
+    function loop() { uniforms.uTime.value = (Date.now() - t0) * 0.001; renderer.render(scene, camera); requestAnimationFrame(loop); }
+    loop();
+    window.addEventListener("resize", function() {
+      renderer.setSize(el.clientWidth, el.clientHeight);
+      uniforms.uRes.value.set(el.clientWidth, el.clientHeight);
+    });
+  })();
+
+  // ===== APP DEMO (vanilla JS) =====
+  (function initAppDemo() {
+    let scrubHours = 0;
+    let use24h = true;
+    let activeGroup = 0;
+
+    const container = document.getElementById("appDemo");
+
+    function render() {
+      const sp = ((scrubHours + 24) / 48) * 100;
+      const ct = getTimeForOffset(8, scrubHours);
+      const ol = scrubHours === 0 ? "Now" : (scrubHours > 0 ? `+${scrubHours}h from now` : `${scrubHours}h from now`);
+
+      let citiesHTML = "";
+      for (const city of CITIES) {
+        const time = getTimeForOffset(city.offset, scrubHours);
+        const status = getStatus(time.getHours());
+        const dayLabel = getDayLabel(time);
+
+        let segs = "";
+        for (let h = 0; h < 24; h++) {
+          const t = getTimeForOffset(city.offset, scrubHours - 12 + h);
+          segs += `<div class="timeline-seg" style="background:${statusColor(getStatus(t.getHours()))}"></div>`;
+        }
+
+        citiesHTML += `
+          <div>
+            <div class="city-row">
+              <div class="city-left">
+                <span class="city-flag">${city.flag}</span>
+                <div><div class="city-name">${city.name}</div><div class="city-abbr">${city.abbr}</div></div>
+              </div>
+              <div class="city-right">
+                <div><div class="city-time">${formatTime(time, use24h)}</div><div class="city-day">${dayLabel}</div></div>
+                <div class="city-dot" style="background:${statusColor(status)}"></div>
+              </div>
+            </div>
+            <div class="timeline">
+              <div class="timeline-track">${segs}</div>
+              <div class="timeline-needle" style="left:${sp}%"></div>
+            </div>
+          </div>`;
+      }
+
+      const pillsHTML = GROUPS.map((g, i) =>
+        `<button class="pill ${activeGroup === i ? 'pill-active' : 'pill-inactive'}" data-group="${i}">${g}</button>`
+      ).join("");
+
+      container.innerHTML = `
+        <div class="app-card">
+          <div class="app-card-glow"></div>
+          <div class="search-bar">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <span>Add city...</span>
+            <button>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </button>
+          </div>
+          <div class="group-pills">${pillsHTML}</div>
+          <div class="city-list">${citiesHTML}</div>
+          <div class="scrub-section">
+            <div class="scrub-header">
+              <span class="scrub-label">${ol}</span>
+              <div class="scrub-time-wrap">
+                <span class="scrub-clock">\u23F0</span>
+                <span class="scrub-time">${formatTime(ct, use24h)}</span>
+              </div>
+            </div>
+            <div class="scrub-row">
+              <span class="scrub-bound">-24h</span>
+              <div style="flex:1"><input type="range" min="-24" max="24" step="0.5" value="${scrubHours}" id="scrubSlider"></div>
+              <span class="scrub-bound scrub-bound-right">+24h</span>
+            </div>
+            <div class="legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div><span class="legend-label">Available</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#e2b944"></div><span class="legend-label">Heads up</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#c45c5c"></div><span class="legend-label">Sleeping</span></div>
+            </div>
+          </div>
+        </div>`;
+
+      // Attach events
+      container.querySelector("#scrubSlider").addEventListener("input", function(e) {
+        scrubHours = parseFloat(e.target.value);
+        render();
+      });
+      container.querySelectorAll(".pill").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          activeGroup = parseInt(this.dataset.group);
+          render();
+        });
+      });
+    }
+
+    render();
+  })();
+  </script>
+</body>
+</html>
