@@ -98,145 +98,33 @@
     #footer a { color: rgba(255,255,255,0.12); text-decoration: none; transition: text-decoration-color 0.2s; }
     #footer a:hover { text-decoration: underline; text-decoration-color: rgba(255,255,255,0.2); text-underline-offset: 2px; }
 
-    /* App demo — matches SwiftUI popover */
-    .app-card {
-      width: 340px; max-width: 90vw;
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(60px) saturate(1.6);
-      -webkit-backdrop-filter: blur(60px) saturate(1.6);
-      border-radius: 14px;
-      border: 0.5px solid rgba(255,255,255,0.1);
-      box-shadow: 0 24px 80px rgba(0,0,0,0.55), 0 0 0 0.5px rgba(255,255,255,0.06) inset, 0 1px 0 rgba(255,255,255,0.08) inset;
-      padding: 14px 0 0;
-      display: flex; flex-direction: column; position: relative; overflow: hidden;
+    /* Screenshot showcase */
+    .screenshot-wrap {
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      position: relative; z-index: 1;
     }
-    .app-card-glow {
-      position: absolute; top: 0; left: 0; right: 0; height: 60px;
-      background: linear-gradient(180deg, rgba(90,60,140,0.05) 0%, transparent 100%);
-      pointer-events: none; border-radius: 14px 14px 0 0;
+    .screenshot-toggle {
+      display: flex; gap: 4px; background: rgba(255,255,255,0.06);
+      border-radius: 100px; padding: 3px; border: 0.5px solid rgba(255,255,255,0.08);
     }
-
-    /* Search bar */
-    .search-bar {
-      display: flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,0.06); border-radius: 10px;
-      padding: 0 10px; height: 30px; position: relative; z-index: 1;
-      border: 0.5px solid rgba(255,255,255,0.08);
-      margin: 0 16px;
-    }
-    .search-bar .search-icon { flex-shrink: 0; }
-    .search-bar .search-text { font-size: 12px; color: rgba(255,255,255,0.3); flex: 1; }
-    .toolbar-buttons { display: flex; gap: 3px; }
-    .toolbar-btn {
-      width: 26px; height: 26px; border-radius: 7px; border: none;
-      background: rgba(255,255,255,0.06); display: flex; align-items: center;
-      justify-content: center; cursor: pointer; padding: 0;
-      font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.4);
-      font-family: inherit;
-      border: 0.5px solid rgba(255,255,255,0.08);
-      transition: all 0.15s ease;
-    }
-    .toolbar-btn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
-
-    /* Group pills */
-    .group-pills {
-      display: flex; gap: 5px; justify-content: center;
-      position: relative; z-index: 1; margin: 10px 16px 10px;
-    }
-    .pill {
-      font-size: 11px; padding: 0 12px; height: 24px; border-radius: 100px;
+    .screenshot-toggle button {
+      font-size: 11px; padding: 4px 14px; border-radius: 100px;
       cursor: pointer; font-family: inherit; transition: all 0.2s ease;
-      display: flex; align-items: center;
+      border: none; background: transparent; color: rgba(255,255,255,0.35);
+      font-weight: 400;
     }
-    .pill-active {
+    .screenshot-toggle button.active {
       background: rgba(255,255,255,0.14); color: rgba(255,255,255,0.9);
-      border: 0.5px solid rgba(255,255,255,0.15); font-weight: 600;
+      font-weight: 600;
     }
-    .pill-inactive {
-      background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.35);
-      border: 0.5px solid rgba(255,255,255,0.08); font-weight: 400;
+    .screenshot-container { position: relative; }
+    .screenshot-img {
+      display: block; max-width: 340px; width: 85vw;
+      border-radius: 16px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(255,255,255,0.06);
+      transition: opacity 0.3s ease;
     }
-
-    /* City list */
-    .city-list { display: flex; flex-direction: column; position: relative; z-index: 1; padding: 0 16px; }
-    .city-row {
-      display: flex; align-items: center; gap: 6px;
-      height: 44px; padding: 0 4px; border-radius: 8px;
-      transition: background 0.15s ease;
-    }
-    .city-row:hover { background: rgba(255,255,255,0.03); }
-    .city-row-home { background: rgba(167,180,255,0.04); }
-    .city-row-home:hover { background: rgba(167,180,255,0.07); }
-
-    /* Flag column */
-    .city-flag { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; position: relative; }
-    .city-flag-pin {
-      position: absolute; bottom: -2px; right: -4px; font-size: 7px; line-height: 1;
-    }
-
-    /* Name + offset column */
-    .city-info { width: 76px; flex-shrink: 0; display: flex; flex-direction: column; gap: 1px; }
-    .city-name { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.88); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .city-name-home { color: rgba(200,210,255,0.95) !important; font-weight: 600 !important; }
-    .city-abbr { font-size: 10px; color: rgba(255,255,255,0.3); line-height: 1; }
-
-    /* Timeline bar (middle, fills remaining space) */
-    .timeline {
-      flex: 1; min-width: 0; height: 9px; position: relative;
-      display: flex; align-items: center; cursor: pointer;
-    }
-    .timeline-track {
-      display: flex; height: 6px; width: 100%;
-      border-radius: 100px; overflow: hidden;
-    }
-    .timeline-seg { flex: 1; }
-    .timeline-needle {
-      position: absolute; top: 0; width: 2px; height: 9px;
-      background: rgba(255,255,255,0.5); border-radius: 1px;
-      transform: translateX(-1px); transition: left 0.08s ease;
-    }
-    .timeline-now-marker {
-      position: absolute; top: 0; width: 2px; height: 9px;
-      background: rgba(140,130,255,0.7); border-radius: 1px;
-      transform: translateX(-1px);
-    }
-
-    /* Time + date column */
-    .city-time-col { width: 68px; flex-shrink: 0; text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
-    .city-time {
-      font-size: 17px; font-weight: 300; color: rgba(255,255,255,0.85);
-      font-variant-numeric: tabular-nums; letter-spacing: -0.01em; line-height: 1;
-      display: flex; align-items: baseline; gap: 2px;
-    }
-    .city-time-period { font-size: 9px; font-weight: 400; color: rgba(255,255,255,0.45); }
-    .city-day { font-size: 9px; color: rgba(255,255,255,0.2); line-height: 1; }
-    .city-day-other { color: rgba(167,180,255,0.55); font-weight: 500; }
-
-    /* Bottom section */
-    .bottom-section { position: relative; z-index: 1; margin-top: 10px; }
-    .bottom-divider { height: 0.5px; background: rgba(255,255,255,0.08); margin: 0 16px; }
-    .bottom-row {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 6px 20px 0;
-    }
-    .bottom-label { font-size: 11px; color: rgba(255,255,255,0.3); cursor: pointer; }
-    .bottom-time-wrap { display: flex; align-items: center; gap: 4px; }
-    .bottom-clock { font-size: 10px; color: rgba(140,130,255,0.7); }
-    .bottom-time {
-      font-size: 12px; font-weight: 400; color: rgba(140,130,255,0.7);
-      font-variant-numeric: tabular-nums;
-      display: flex; align-items: baseline; gap: 2px;
-    }
-    .bottom-time-period { font-size: 9px; font-weight: 400; opacity: 0.7; }
-
-    /* Legend */
-    .legend {
-      display: flex; gap: 18px; justify-content: center;
-      padding: 6px 0 8px;
-    }
-    .legend-item { display: flex; gap: 5px; align-items: center; }
-    .legend-dot { width: 5px; height: 5px; border-radius: 50%; }
-    .legend-label { font-size: 9px; color: rgba(255,255,255,0.25); }
+    .screenshot-img.hidden { display: none; }
 
     @media (max-width: 420px) {
       .btn { width: 150px; font-size: 12px; padding: 8px 0; }
@@ -265,7 +153,16 @@
         </a>
       </div>
     </div>
-    <div id="appDemo"></div>
+    <div class="screenshot-wrap">
+      <div class="screenshot-toggle">
+        <button class="active" data-view="row">Row View</button>
+        <button data-view="column">Column View</button>
+      </div>
+      <div class="screenshot-container">
+        <img class="screenshot-img" id="img-row" src="row-view.png" alt="Whenish row view showing cities with timeline bars">
+        <img class="screenshot-img hidden" id="img-column" src="column-view.png" alt="Whenish column view showing vertical timeline bars">
+      </div>
+    </div>
   </div>
 
   <div id="footer">
@@ -274,43 +171,25 @@
 
   <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
   <script>
-  // ===== DATA =====
-  const CITIES = [
-    { id: 1, name: "Honolulu", flag: "\u{1F1FA}\u{1F1F8}", offset: -10, abbr: "Same", home: false },
-    { id: 2, name: "San Francisco", flag: "\u{1F1FA}\u{1F1F8}", offset: -8, abbr: "+3h", home: false },
-    { id: 3, name: "New York", flag: "\u{1F1FA}\u{1F1F8}", offset: -5, abbr: "You", home: true },
-    { id: 4, name: "Vienna", flag: "\u{1F1E6}\u{1F1F9}", offset: 1, abbr: "+11h", home: false },
-    { id: 5, name: "Tokyo", flag: "\u{1F1EF}\u{1F1F5}", offset: 9, abbr: "+19h", home: false },
-  ];
-  const GROUPS = ["Work", "Friends", "Holiday"];
-
-  function getTimeForOffset(o, s) {
-    const n = new Date();
-    return new Date(n.getTime() + n.getTimezoneOffset() * 60000 + o * 3600000 + s * 3600000);
-  }
-  function formatTime(d, h) {
-    return h ? d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false })
-             : d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
-  }
-  function formatTimeParts(d, h) {
-    if (h) return { digits: d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false }), period: "" };
-    const full = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
-    const m = full.match(/^([\d:]+)\s*(AM|PM)$/i);
-    return m ? { digits: m[1], period: m[2] } : { digits: full, period: "" };
-  }
-  function getStatus(h) {
-    return h >= 9 && h < 17 ? "working" : (h >= 7 && h < 9 || h >= 17 && h < 21) ? "headsup" : "sleeping";
-  }
-  function statusColor(s) {
-    return s === "working" ? "rgba(16,185,129,0.85)" : s === "headsup" ? "rgba(251,191,36,0.70)" : "rgba(239,68,68,0.55)";
-  }
-  function getDayLabel(d) {
-    const n = new Date(), t = new Date(n.getFullYear(), n.getMonth(), n.getDate()),
-          c = new Date(d.getFullYear(), d.getMonth(), d.getDate()),
-          diff = Math.round((c - t) / 86400000);
-    return diff === 0 ? "Today" : diff === 1 ? "Tomorrow" : diff === -1 ? "Yesterday"
-         : d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
-  }
+  // ===== SCREENSHOT TOGGLE =====
+  (function initScreenshotToggle() {
+    const btns = document.querySelectorAll(".screenshot-toggle button");
+    const imgRow = document.getElementById("img-row");
+    const imgCol = document.getElementById("img-column");
+    btns.forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        btns.forEach(function(b) { b.classList.remove("active"); });
+        btn.classList.add("active");
+        if (btn.dataset.view === "row") {
+          imgRow.classList.remove("hidden");
+          imgCol.classList.add("hidden");
+        } else {
+          imgCol.classList.remove("hidden");
+          imgRow.classList.add("hidden");
+        }
+      });
+    });
+  })();
 
   // ===== STAR FIELD =====
   (function initStars() {
@@ -533,165 +412,6 @@
     });
   })();
 
-  // ===== APP DEMO (vanilla JS) =====
-  (function initAppDemo() {
-    let scrubHours = 0;
-    let use24h = true;
-    let activeGroup = 0;
-    let isDragging = false;
-
-    const container = document.getElementById("appDemo");
-    const HOME_OFFSET = -5; // New York
-
-    // Attach global drag listeners once
-    document.addEventListener("mousemove", function(e) {
-      if (!isDragging) return;
-      const tl = container.querySelector(".timeline");
-      if (!tl) return;
-      const rect = tl.getBoundingClientRect();
-      const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      scrubHours = Math.round((pct * 48 - 24) * 2) / 2;
-      render();
-    });
-    document.addEventListener("mouseup", function() { isDragging = false; });
-
-    function render() {
-      const sp = ((scrubHours + 24) / 48) * 100;
-      const nowPct = 50; // center = now (0 offset)
-      const homeTime = getTimeForOffset(HOME_OFFSET, scrubHours);
-      const homeParts = formatTimeParts(homeTime, use24h);
-      const ol = scrubHours === 0 ? "Now" : (scrubHours > 0 ? `+${scrubHours}h` : `${scrubHours}h`);
-
-      let citiesHTML = "";
-      for (const city of CITIES) {
-        const time = getTimeForOffset(city.offset, scrubHours);
-        const dayLabel = getDayLabel(time);
-        const isToday = dayLabel === "Today";
-        const tp = formatTimeParts(time, use24h);
-
-        // 48 segments for half-hour precision
-        let segs = "";
-        for (let s = 0; s < 48; s++) {
-          const t = getTimeForOffset(city.offset, scrubHours - 12 + s * 0.5);
-          segs += `<div class="timeline-seg" style="background:${statusColor(getStatus(t.getHours()))}"></div>`;
-        }
-
-        const rowClass = city.home ? "city-row city-row-home" : "city-row";
-        const nameClass = city.home ? "city-name city-name-home" : "city-name";
-        const dayClass = isToday ? "city-day" : "city-day city-day-other";
-
-        const flagContent = city.home
-          ? `<span class="city-flag">${city.flag}<span class="city-flag-pin">📍</span></span>`
-          : `<span class="city-flag">${city.flag}</span>`;
-
-        // Show "now" marker when scrubbed away from center
-        const nowMarker = Math.abs(scrubHours) > 0.25
-          ? `<div class="timeline-now-marker" style="left:${nowPct}%"></div>` : "";
-
-        citiesHTML += `
-          <div class="${rowClass}">
-            ${flagContent}
-            <div class="city-info">
-              <div class="${nameClass}">${city.name}</div>
-              <div class="city-abbr">${city.abbr}</div>
-            </div>
-            <div class="timeline" data-scrub="true">
-              <div class="timeline-track">${segs}</div>
-              ${nowMarker}
-              <div class="timeline-needle" style="left:${sp}%"></div>
-            </div>
-            <div class="city-time-col">
-              <div class="city-time">${tp.digits}${tp.period ? `<span class="city-time-period">${tp.period}</span>` : ""}</div>
-              <div class="${dayClass}">${dayLabel}</div>
-            </div>
-          </div>`;
-      }
-
-      const pillsHTML = GROUPS.map((g, i) =>
-        `<button class="pill ${activeGroup === i ? 'pill-active' : 'pill-inactive'}" data-group="${i}">${g}</button>`
-      ).join("");
-
-      container.innerHTML = `
-        <div class="app-card">
-          <div class="app-card-glow"></div>
-          <div class="search-bar">
-            <svg class="search-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-            <span class="search-text">Add city...</span>
-            <div class="toolbar-buttons">
-              <button class="toolbar-btn" title="Toggle view">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-              </button>
-              <button class="toolbar-btn" title="Pin city" style="font-size:11px;line-height:1">📍</button>
-              <button class="toolbar-btn" title="Toggle 24h" id="toggle24h">24h</button>
-            </div>
-          </div>
-          <div class="group-pills">${pillsHTML}</div>
-          <div class="city-list">${citiesHTML}</div>
-          <div class="bottom-section">
-            <div class="bottom-divider"></div>
-            <div class="bottom-row">
-              <span class="bottom-label" id="resetScrub">${ol}</span>
-              <div class="bottom-time-wrap">
-                <span class="bottom-clock">&#x23F0;</span>
-                <span class="bottom-time">${homeParts.digits}${homeParts.period ? `<span class="bottom-time-period">${homeParts.period}</span>` : ""}</span>
-              </div>
-            </div>
-            <div class="legend">
-              <div class="legend-item"><div class="legend-dot" style="background:rgba(16,185,129,0.85)"></div><span class="legend-label">Available</span></div>
-              <div class="legend-item"><div class="legend-dot" style="background:rgba(251,191,36,0.70)"></div><span class="legend-label">Heads up</span></div>
-              <div class="legend-item"><div class="legend-dot" style="background:rgba(239,68,68,0.55)"></div><span class="legend-label">Sleeping</span></div>
-            </div>
-          </div>
-        </div>`;
-
-      // Group pill clicks
-      container.querySelectorAll(".pill").forEach(function(btn) {
-        btn.addEventListener("click", function() {
-          activeGroup = parseInt(this.dataset.group);
-          render();
-        });
-      });
-
-      // Timeline scrub: mousedown on any timeline
-      container.querySelectorAll(".timeline[data-scrub]").forEach(function(tl) {
-        tl.addEventListener("mousedown", function(e) {
-          isDragging = true;
-          const rect = tl.getBoundingClientRect();
-          const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-          scrubHours = Math.round((pct * 48 - 24) * 2) / 2;
-          render();
-        });
-        tl.addEventListener("touchstart", function(e) {
-          isDragging = true;
-          const rect = tl.getBoundingClientRect();
-          const pct = Math.max(0, Math.min(1, (e.touches[0].clientX - rect.left) / rect.width));
-          scrubHours = Math.round((pct * 48 - 24) * 2) / 2;
-          render();
-        }, { passive: true });
-      });
-
-      container.addEventListener("touchmove", function(e) {
-        if (!isDragging) return;
-        const tl = container.querySelector(".timeline");
-        if (!tl) return;
-        const rect = tl.getBoundingClientRect();
-        const pct = Math.max(0, Math.min(1, (e.touches[0].clientX - rect.left) / rect.width));
-        scrubHours = Math.round((pct * 48 - 24) * 2) / 2;
-        render();
-      }, { passive: true });
-      container.addEventListener("touchend", function() { isDragging = false; });
-
-      // Reset scrub on click "Now" label
-      const resetBtn = container.querySelector("#resetScrub");
-      if (resetBtn) resetBtn.addEventListener("click", function() { scrubHours = 0; render(); });
-
-      // 24h toggle
-      const toggleBtn = container.querySelector("#toggle24h");
-      if (toggleBtn) toggleBtn.addEventListener("click", function() { use24h = !use24h; render(); });
-    }
-
-    render();
-  })();
   </script>
 </body>
 </html>
