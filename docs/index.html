@@ -122,11 +122,16 @@
       border: 1px solid rgba(255,255,255,0.04);
     }
     .search-bar span { font-size: 11px; color: rgba(255,255,255,0.2); flex: 1; }
-    .search-bar button {
+    .toolbar-buttons { display: flex; gap: 4px; }
+    .toolbar-btn {
       width: 22px; height: 22px; border-radius: 6px; border: none;
       background: rgba(255,255,255,0.06); display: flex; align-items: center;
       justify-content: center; cursor: pointer; padding: 0;
+      font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.3);
+      font-family: inherit;
     }
+    .city-name-home { color: rgba(255,255,255,1) !important; }
+    .city-abbr-home { color: rgba(139,92,246,0.7); font-weight: 600; }
     .group-pills {
       display: flex; gap: 4px; justify-content: center;
       position: relative; z-index: 1; margin: 10px 0 12px;
@@ -164,32 +169,9 @@
     .scrub-section { position: relative; z-index: 1; margin-top: 14px; }
     .scrub-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
     .scrub-label { font-size: 9px; color: rgba(255,255,255,0.35); }
-    .scrub-time-wrap { display: flex; align-items: center; gap: 4px; }
-    .scrub-clock { font-size: 9px; color: rgba(255,255,255,0.3); }
     .scrub-time { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.7); font-variant-numeric: tabular-nums; }
-    .scrub-row { display: flex; align-items: center; gap: 5px; }
-    .scrub-bound { font-size: 7px; color: rgba(255,255,255,0.25); min-width: 16px; }
-    .scrub-bound-right { text-align: right; }
 
-    input[type="range"] {
-      width: 100%; appearance: none; -webkit-appearance: none;
-      background: transparent; cursor: pointer; height: 18px; margin: 0;
-    }
-    input[type="range"]::-webkit-slider-track {
-      height: 2px; background: rgba(255,255,255,0.08); border-radius: 1px;
-    }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
-      background: white; margin-top: -6px;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.1);
-    }
-    input[type="range"]::-moz-range-track {
-      height: 2px; background: rgba(255,255,255,0.08); border-radius: 1px; border: none;
-    }
-    input[type="range"]::-moz-range-thumb {
-      width: 14px; height: 14px; border-radius: 50%; background: white; border: none;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.1);
-    }
+    .timeline[data-scrub] { cursor: pointer; }
 
     .legend {
       display: flex; gap: 8px; justify-content: center; margin-top: 6px;
@@ -216,7 +198,7 @@
       <h1>Whenish</h1>
       <p class="tagline">See the world's time at a glance. A free, open-source timezone converter for your macOS menubar.</p>
       <div class="btn-row">
-        <a href="https://github.com/patrik-bernas/whenish/releases/latest" class="btn btn-primary">
+        <a href="https://github.com/patrik-bernas/whenish/releases/latest/download/Whenish.zip" download class="btn btn-primary">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download for Mac
         </a>
@@ -237,12 +219,13 @@
   <script>
   // ===== DATA =====
   const CITIES = [
-    { id: 1, name: "Seoul", flag: "\u{1F1F0}\u{1F1F7}", offset: 9, abbr: "+1h" },
-    { id: 2, name: "Bali", flag: "\u{1F1EE}\u{1F1E9}", offset: 8, abbr: "Same" },
-    { id: 3, name: "Amsterdam", flag: "\u{1F1F3}\u{1F1F1}", offset: 1, abbr: "-7h" },
-    { id: 4, name: "San Francisco", flag: "\u{1F1FA}\u{1F1F8}", offset: -8, abbr: "-16h" },
+    { id: 1, name: "Honolulu", flag: "\u{1F1FA}\u{1F1F8}", offset: -10, abbr: "Same", home: false },
+    { id: 2, name: "San Francisco", flag: "\u{1F1FA}\u{1F1F8}", offset: -8, abbr: "+3h", home: false },
+    { id: 3, name: "New York", flag: "\u{1F1FA}\u{1F1F8}", offset: -5, abbr: "You", home: true },
+    { id: 4, name: "Vienna", flag: "\u{1F1E6}\u{1F1F9}", offset: 1, abbr: "+11h", home: false },
+    { id: 5, name: "Tokyo", flag: "\u{1F1EF}\u{1F1F5}", offset: 9, abbr: "+19h", home: false },
   ];
-  const GROUPS = ["Work", "Family", "Travel"];
+  const GROUPS = ["Work", "Friends", "Holiday"];
 
   function getTimeForOffset(o, s) {
     const n = new Date();
@@ -256,7 +239,7 @@
     return h >= 9 && h < 17 ? "working" : (h >= 7 && h < 9 || h >= 17 && h < 21) ? "headsup" : "sleeping";
   }
   function statusColor(s) {
-    return s === "working" ? "#4ade80" : s === "headsup" ? "#e2b944" : "#c45c5c";
+    return s === "working" ? "#10B981" : s === "headsup" ? "#FBBF24" : "#EF4444";
   }
   function getDayLabel(d) {
     const n = new Date(), t = new Date(n.getFullYear(), n.getMonth(), n.getDate()),
@@ -492,12 +475,14 @@
     let scrubHours = 0;
     let use24h = true;
     let activeGroup = 0;
+    let isDragging = false;
 
     const container = document.getElementById("appDemo");
+    const HOME_OFFSET = -5; // New York
 
     function render() {
       const sp = ((scrubHours + 24) / 48) * 100;
-      const ct = getTimeForOffset(8, scrubHours);
+      const homeTime = getTimeForOffset(HOME_OFFSET, scrubHours);
       const ol = scrubHours === 0 ? "Now" : (scrubHours > 0 ? `+${scrubHours}h from now` : `${scrubHours}h from now`);
 
       let citiesHTML = "";
@@ -512,19 +497,22 @@
           segs += `<div class="timeline-seg" style="background:${statusColor(getStatus(t.getHours()))}"></div>`;
         }
 
+        const nameClass = city.home ? "city-name city-name-home" : "city-name";
+        const abbrClass = city.home ? "city-abbr city-abbr-home" : "city-abbr";
+
         citiesHTML += `
           <div>
             <div class="city-row">
               <div class="city-left">
                 <span class="city-flag">${city.flag}</span>
-                <div><div class="city-name">${city.name}</div><div class="city-abbr">${city.abbr}</div></div>
+                <div><div class="${nameClass}">${city.name}</div><div class="${abbrClass}">${city.abbr}</div></div>
               </div>
               <div class="city-right">
                 <div><div class="city-time">${formatTime(time, use24h)}</div><div class="city-day">${dayLabel}</div></div>
                 <div class="city-dot" style="background:${statusColor(status)}"></div>
               </div>
             </div>
-            <div class="timeline">
+            <div class="timeline" data-scrub="true">
               <div class="timeline-track">${segs}</div>
               <div class="timeline-needle" style="left:${sp}%"></div>
             </div>
@@ -541,44 +529,75 @@
           <div class="search-bar">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
             <span>Add city...</span>
-            <button>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-            </button>
+            <div class="toolbar-buttons">
+              <button class="toolbar-btn" title="Toggle view">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+              </button>
+              <button class="toolbar-btn" title="Pin city" style="font-size:11px">📍</button>
+              <button class="toolbar-btn" title="Toggle 24h" id="toggle24h">24h</button>
+            </div>
           </div>
           <div class="group-pills">${pillsHTML}</div>
           <div class="city-list">${citiesHTML}</div>
           <div class="scrub-section">
             <div class="scrub-header">
               <span class="scrub-label">${ol}</span>
-              <div class="scrub-time-wrap">
-                <span class="scrub-clock">\u23F0</span>
-                <span class="scrub-time">${formatTime(ct, use24h)}</span>
-              </div>
-            </div>
-            <div class="scrub-row">
-              <span class="scrub-bound">-24h</span>
-              <div style="flex:1"><input type="range" min="-24" max="24" step="0.5" value="${scrubHours}" id="scrubSlider"></div>
-              <span class="scrub-bound scrub-bound-right">+24h</span>
+              <span class="scrub-time">${formatTime(homeTime, use24h)}</span>
             </div>
             <div class="legend">
-              <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div><span class="legend-label">Available</span></div>
-              <div class="legend-item"><div class="legend-dot" style="background:#e2b944"></div><span class="legend-label">Heads up</span></div>
-              <div class="legend-item"><div class="legend-dot" style="background:#c45c5c"></div><span class="legend-label">Sleeping</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#10B981"></div><span class="legend-label">Available</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#FBBF24"></div><span class="legend-label">Heads up</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#EF4444"></div><span class="legend-label">Sleeping</span></div>
             </div>
           </div>
         </div>`;
 
       // Attach events
-      container.querySelector("#scrubSlider").addEventListener("input", function(e) {
-        scrubHours = parseFloat(e.target.value);
-        render();
-      });
       container.querySelectorAll(".pill").forEach(function(btn) {
         btn.addEventListener("click", function() {
           activeGroup = parseInt(this.dataset.group);
           render();
         });
       });
+
+      // Timeline scrub: click/drag on timeline bars
+      function handleScrub(e) {
+        const timeline = e.target.closest("[data-scrub]");
+        if (!timeline) return;
+        const rect = timeline.getBoundingClientRect();
+        const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        scrubHours = Math.round((pct * 48 - 24) * 2) / 2;
+        render();
+      }
+
+      container.addEventListener("mousedown", function(e) {
+        if (e.target.closest("[data-scrub]")) { isDragging = true; handleScrub(e); }
+      });
+      document.addEventListener("mousemove", function(e) {
+        if (isDragging) handleScrub(e);
+      });
+      document.addEventListener("mouseup", function() { isDragging = false; });
+
+      // Touch support for timeline scrub
+      container.addEventListener("touchstart", function(e) {
+        if (e.target.closest("[data-scrub]")) {
+          isDragging = true;
+          handleScrub({ clientX: e.touches[0].clientX, target: e.target });
+        }
+      }, { passive: true });
+      container.addEventListener("touchmove", function(e) {
+        if (isDragging) handleScrub({ clientX: e.touches[0].clientX, target: e.target });
+      }, { passive: true });
+      container.addEventListener("touchend", function() { isDragging = false; });
+
+      // 24h toggle
+      const toggleBtn = container.querySelector("#toggle24h");
+      if (toggleBtn) {
+        toggleBtn.addEventListener("click", function() {
+          use24h = !use24h;
+          render();
+        });
+      }
     }
 
     render();
