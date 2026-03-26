@@ -28,13 +28,14 @@ struct PersistenceService {
     }
 
     func loadGroups() -> [TimezoneGroup] {
-        guard
-            let data = userDefaults.data(forKey: Keys.groups),
-            let decodedGroups = try? decoder.decode([TimezoneGroup].self, from: data)
-        else {
+        guard let data = userDefaults.data(forKey: Keys.groups) else {
             let groups = [defaultGroup()]
             saveGroups(groups)
             return groups
+        }
+
+        guard let decodedGroups = try? decoder.decode([TimezoneGroup].self, from: data) else {
+            return [defaultGroup()]
         }
 
         let groups = sanitizedGroups(decodedGroups)
@@ -66,10 +67,7 @@ struct PersistenceService {
     }
 
     func loadSettings() -> AppSettings {
-        guard
-            let data = userDefaults.data(forKey: Keys.settings),
-            let settings = try? decoder.decode(AppSettings.self, from: data)
-        else {
+        guard let data = userDefaults.data(forKey: Keys.settings) else {
             let groups = loadGroups()
             let settings = AppSettings(
                 use24HourFormat: true,
@@ -78,6 +76,15 @@ struct PersistenceService {
             )
             saveSettings(settings)
             return settings
+        }
+
+        guard let settings = try? decoder.decode(AppSettings.self, from: data) else {
+            let groups = loadGroups()
+            return AppSettings(
+                use24HourFormat: true,
+                homeTimeZoneIdentifier: groups.first?.cities.first?.timeZoneIdentifier,
+                activeGroupId: groups.first?.id
+            )
         }
 
         return settings

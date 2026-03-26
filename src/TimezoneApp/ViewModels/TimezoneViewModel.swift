@@ -35,11 +35,6 @@ final class TimezoneViewModel: ObservableObject {
     private var clockTask: Task<Void, Never>?
     private var cancellables = Set<AnyCancellable>()
 
-    // Cache sorted active group to avoid re-sorting on every access
-    private var cachedActiveGroupIndex: Int = -1
-    private var cachedActiveGroupSource: TimezoneGroup?
-    private var cachedSortedGroup: TimezoneGroup?
-
     init(
         persistenceService: PersistenceService? = nil,
         timezoneService: TimezoneService = TimezoneService(),
@@ -72,25 +67,12 @@ final class TimezoneViewModel: ObservableObject {
 
     var activeGroup: TimezoneGroup? {
         guard groups.indices.contains(activeGroupIndex) else { return nil }
-        let group = groups[activeGroupIndex]
-
-        // Return cached sorted version if the group hasn't changed
-        if activeGroupIndex == cachedActiveGroupIndex,
-           let cachedSource = cachedActiveGroupSource,
-           let cached = cachedSortedGroup,
-           cachedSource == group {
-            return cached
-        }
-
-        var sorted = group
+        var sorted = groups[activeGroupIndex]
         sorted.cities.sort { city1, city2 in
             let tz1 = TimeZone(identifier: city1.timeZoneIdentifier) ?? .current
             let tz2 = TimeZone(identifier: city2.timeZoneIdentifier) ?? .current
             return tz1.secondsFromGMT() < tz2.secondsFromGMT()
         }
-        cachedActiveGroupIndex = activeGroupIndex
-        cachedActiveGroupSource = group
-        cachedSortedGroup = sorted
         return sorted
     }
 
@@ -146,7 +128,7 @@ final class TimezoneViewModel: ObservableObject {
     func removeCity(_ city: City) {
         guard groups.indices.contains(activeGroupIndex) else { return }
         groups[activeGroupIndex].cities.removeAll { $0.id == city.id }
-        if city.isHome {
+        if city.isHome && !containsCity(withTimeZoneIdentifier: city.timeZoneIdentifier) {
             assignFallbackHomeTimezone()
         }
     }
@@ -193,7 +175,9 @@ final class TimezoneViewModel: ObservableObject {
         guard groups.count > 1, groups.indices.contains(index) else { return }
         let wasActive = index == activeGroupIndex
         groups.remove(at: index)
-        if wasActive || activeGroupIndex >= groups.count {
+        if index < activeGroupIndex {
+            activeGroupIndex -= 1
+        } else if wasActive || activeGroupIndex >= groups.count {
             activeGroupIndex = 0
         }
         if let homeIdentifier = settings.homeTimeZoneIdentifier,
@@ -276,9 +260,6 @@ final class TimezoneViewModel: ObservableObject {
 
     /// Debounce groups persistence — coalesce rapid mutations (e.g. drag, rename typing)
     private func scheduleGroupsPersist() {
-        cachedSortedGroup = nil // Invalidate cache
-        cachedActiveGroupSource = nil
-
         groupsPersistTask?.cancel()
         groupsPersistTask = Task { @MainActor [weak self] in
             try? await Task.sleep(nanoseconds: 300_000_000) // 0.3s

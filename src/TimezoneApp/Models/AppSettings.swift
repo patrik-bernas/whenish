@@ -17,4 +17,19 @@ struct AppSettings: Codable, Equatable {
         self.activeGroupId = activeGroupId
         self.isColumnView = isColumnView
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case use24HourFormat
+        case homeTimeZoneIdentifier
+        case activeGroupId
+        case isColumnView
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.use24HourFormat = try container.decodeIfPresent(Bool.self, forKey: .use24HourFormat) ?? true
+        self.homeTimeZoneIdentifier = try container.decodeIfPresent(String.self, forKey: .homeTimeZoneIdentifier)
+        self.activeGroupId = try container.decodeIfPresent(UUID.self, forKey: .activeGroupId)
+        self.isColumnView = try container.decodeIfPresent(Bool.self, forKey: .isColumnView) ?? false
+    }
 }

@@ -24,20 +24,18 @@ struct TimelineBarView: View {
 
 @MainActor
 enum TimelineSlotColors {
-    private struct CacheKey: Hashable {
-        let timeZoneIdentifier: String
-        let hourBucket: Int
-    }
-
     private static let timezoneService = TimezoneService()
-    private static var cache: [CacheKey: [Color]] = [:]
+    private static var cachedHourBucket: Int?
+    private static var cache: [String: [Color]] = [:]
 
     static func colors(for timeZone: TimeZone, referenceDate: Date) -> [Color] {
-        let key = CacheKey(
-            timeZoneIdentifier: timeZone.identifier,
-            hourBucket: Int(referenceDate.timeIntervalSinceReferenceDate / 3600)
-        )
-        if let cached = cache[key] {
+        let hourBucket = Int(referenceDate.timeIntervalSinceReferenceDate / 3600)
+        if cachedHourBucket != hourBucket {
+            cachedHourBucket = hourBucket
+            cache.removeAll(keepingCapacity: true)
+        }
+
+        if let cached = cache[timeZone.identifier] {
             return cached
         }
 
@@ -55,7 +53,7 @@ enum TimelineSlotColors {
                 return Color(red: 239/255, green: 68/255, blue: 68/255).opacity(0.55)
             }
         }
-        cache[key] = colors
+        cache[timeZone.identifier] = colors
         return colors
     }
 }
