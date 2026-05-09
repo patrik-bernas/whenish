@@ -1,5 +1,26 @@
 import SwiftUI
 
+enum RowLayoutMetrics {
+    static let rowHeight: CGFloat = 52
+    static let horizontalPadding: CGFloat = 20
+    static let itemSpacing: CGFloat = 6
+    static let flagWidth: CGFloat = 24
+    static let nameWidth: CGFloat = 95
+    static let timelineHeight: CGFloat = 9
+    static let timelineBarHeight: CGFloat = 6
+    static let timeWidth: CGFloat = 82
+    static let menubarDotWidth: CGFloat = 6
+    static let removeButtonWidth: CGFloat = 14
+
+    static var timelineLeadingInset: CGFloat {
+        horizontalPadding + flagWidth + itemSpacing + nameWidth + itemSpacing
+    }
+
+    static var timelineTrailingInset: CGFloat {
+        horizontalPadding + removeButtonWidth + itemSpacing + menubarDotWidth + itemSpacing + timeWidth + itemSpacing
+    }
+}
+
 struct CityRowView: View {
     @EnvironmentObject private var viewModel: TimezoneViewModel
 
@@ -10,19 +31,19 @@ struct CityRowView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: 6) {
+            HStack(spacing: RowLayoutMetrics.itemSpacing) {
                 // Flag + home pin
                 ZStack(alignment: .bottomTrailing) {
                     Text(city.flag)
                         .font(.system(size: 18))
-                        .frame(width: 24, height: 24)
+                        .frame(width: RowLayoutMetrics.flagWidth, height: RowLayoutMetrics.flagWidth)
 
                     if city.isHome {
                         Text("📍")
                             .font(.system(size: 7))
                     }
                 }
-                .frame(width: 24, height: 24)
+                .frame(width: RowLayoutMetrics.flagWidth, height: RowLayoutMetrics.flagWidth)
 
                 // Name + offset: 95px fixed
                 VStack(alignment: .leading, spacing: 1) {
@@ -36,14 +57,14 @@ struct CityRowView: View {
                         .foregroundStyle(.white.opacity(0.3))
                         .lineLimit(1)
                 }
-                .frame(width: 95, alignment: .leading)
+                .frame(width: RowLayoutMetrics.nameWidth, alignment: .leading)
 
                 // Timeline bar: flex — takes ALL remaining space
                 GeometryReader { geo in
-                    TimelineBarView(timeZone: viewModel.timeZone(for: city), referenceDate: viewModel.currentDate, width: geo.size.width, height: 6)
+                    TimelineBarView(timeZone: viewModel.timeZone(for: city), referenceDate: viewModel.currentDate, width: geo.size.width, height: RowLayoutMetrics.timelineBarHeight)
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: 9)
+                .frame(height: RowLayoutMetrics.timelineHeight)
 
                 // Time + date: 82px fixed
                 VStack(alignment: .trailing, spacing: 1) {
@@ -67,7 +88,7 @@ struct CityRowView: View {
                         .foregroundStyle(dayParts.isToday ? Color.white.opacity(0.2) : Color(red: 167 / 255, green: 180 / 255, blue: 1).opacity(0.55))
                         .frame(height: 12)
                 }
-                .frame(width: 82, alignment: .trailing)
+                .frame(width: RowLayoutMetrics.timeWidth, alignment: .trailing)
 
                 // Menubar dot: 6px
                 Button {
@@ -75,11 +96,11 @@ struct CityRowView: View {
                 } label: {
                     Circle()
                         .fill(city.showInMenubar ? Color(red: 167 / 255, green: 180 / 255, blue: 1).opacity(0.7) : Color.white.opacity(0.15))
-                        .frame(width: 6, height: 6)
+                        .frame(width: RowLayoutMetrics.menubarDotWidth, height: RowLayoutMetrics.menubarDotWidth)
                         .shadow(color: city.showInMenubar ? Color(red: 167 / 255, green: 180 / 255, blue: 1).opacity(0.35) : .clear, radius: 4)
                 }
                 .buttonStyle(.plain)
-                .frame(width: 6)
+                .frame(width: RowLayoutMetrics.menubarDotWidth)
 
                 // Remove button
                 Button {
@@ -88,15 +109,15 @@ struct CityRowView: View {
                     Text("✕")
                         .font(.system(size: 10))
                         .foregroundStyle(.white.opacity(isHoveringRemove ? 0.4 : 0.12))
-                        .frame(width: 14, height: 14)
+                        .frame(width: RowLayoutMetrics.removeButtonWidth, height: RowLayoutMetrics.removeButtonWidth)
                 }
                 .buttonStyle(.plain)
                 .onHover { hovering in
                     isHoveringRemove = hovering
                 }
             }
-            .padding(.horizontal, 20)
-            .frame(height: 52)
+            .padding(.horizontal, RowLayoutMetrics.horizontalPadding)
+            .frame(height: RowLayoutMetrics.rowHeight)
             .background(
                 Group {
                     if city.isHome {

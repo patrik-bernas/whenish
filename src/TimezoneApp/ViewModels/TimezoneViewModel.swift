@@ -207,7 +207,8 @@ final class TimezoneViewModel: ObservableObject {
             return city.isHome ? "You" : "Same"
         }
 
-        return city.isHome ? "You" : timezoneService.offsetLabel(from: homeTimeZone, to: timeZone(for: city))
+        let offsetDate = currentDate.addingTimeInterval(scrubberOffset * 3600)
+        return city.isHome ? "You" : timezoneService.offsetLabel(from: homeTimeZone, to: timeZone(for: city), at: offsetDate)
     }
 
     func resetScrubber() {
@@ -223,6 +224,21 @@ final class TimezoneViewModel: ObservableObject {
     }
 
     func refreshMenubarTitle() {
+        refreshStatusItemTitle()
+    }
+
+    func flushPendingPersistence() {
+        groupsPersistTask?.cancel()
+        settingsPersistTask?.cancel()
+
+        if groups.indices.contains(activeGroupIndex),
+           settings.activeGroupId != groups[activeGroupIndex].id {
+            settings.activeGroupId = groups[activeGroupIndex].id
+            settingsPersistTask?.cancel()
+        }
+
+        persistenceService.saveGroups(groups)
+        persistenceService.saveSettings(settings)
         refreshStatusItemTitle()
     }
 

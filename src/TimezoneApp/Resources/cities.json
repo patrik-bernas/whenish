@@ -187,8 +187,6 @@
     {"name": "Riga", "country": "Latvia", "countryCode": "LV", "timezoneId": "Europe/Riga", "aliases": []},
     {"name": "Vilnius", "country": "Lithuania", "countryCode": "LT", "timezoneId": "Europe/Vilnius", "aliases": []},
 
-    {"name": "Reykjavik", "country": "Iceland", "countryCode": "IS", "timezoneId": "Atlantic/Reykjavik", "aliases": ["Reykjavík"]},
-
     {"name": "Moscow", "country": "Russia", "countryCode": "RU", "timezoneId": "Europe/Moscow", "aliases": ["Moskva"]},
     {"name": "Saint Petersburg", "country": "Russia", "countryCode": "RU", "timezoneId": "Europe/Moscow", "aliases": ["St Petersburg", "St. Petersburg"]},
     {"name": "Novosibirsk", "country": "Russia", "countryCode": "RU", "timezoneId": "Asia/Novosibirsk", "aliases": []},
@@ -429,8 +427,6 @@
     {"name": "Juba", "country": "South Sudan", "countryCode": "SS", "timezoneId": "Africa/Juba", "aliases": []},
 
     {"name": "Zanzibar", "country": "Tanzania", "countryCode": "TZ", "timezoneId": "Africa/Dar_es_Salaam", "aliases": []},
-    {"name": "Marrakech", "country": "Morocco", "countryCode": "MA", "timezoneId": "Africa/Casablanca", "aliases": ["Marrakesh"]},
-
     {"name": "Bora Bora", "country": "French Polynesia", "countryCode": "PF", "timezoneId": "Pacific/Tahiti", "aliases": []},
     {"name": "Maui", "country": "United States", "countryCode": "US", "timezoneId": "Pacific/Honolulu", "aliases": []},
 
@@ -438,17 +434,10 @@
 
     {"name": "Sana'a", "country": "Yemen", "countryCode": "YE", "timezoneId": "Asia/Aden", "aliases": ["Sanaa"]},
 
-    {"name": "Tashkent", "country": "Uzbekistan", "countryCode": "UZ", "timezoneId": "Asia/Tashkent", "aliases": []},
     {"name": "Samarkand", "country": "Uzbekistan", "countryCode": "UZ", "timezoneId": "Asia/Samarkand", "aliases": []},
 
     {"name": "Lhasa", "country": "China", "countryCode": "CN", "timezoneId": "Asia/Shanghai", "aliases": ["Tibet"]},
     {"name": "Urumqi", "country": "China", "countryCode": "CN", "timezoneId": "Asia/Urumqi", "aliases": []},
-
-    {"name": "Colombo", "country": "Sri Lanka", "countryCode": "LK", "timezoneId": "Asia/Colombo", "aliases": []},
-
-    {"name": "Suva", "country": "Fiji", "countryCode": "FJ", "timezoneId": "Pacific/Fiji", "aliases": []},
-
-    {"name": "Muscat", "country": "Oman", "countryCode": "OM", "timezoneId": "Asia/Muscat", "aliases": []},
 
     {"name": "Nadi", "country": "Fiji", "countryCode": "FJ", "timezoneId": "Pacific/Fiji", "aliases": []},
 
@@ -475,8 +464,6 @@
     {"name": "Richmond", "country": "United States", "countryCode": "US", "timezoneId": "America/New_York", "aliases": []},
     {"name": "Fresno", "country": "United States", "countryCode": "US", "timezoneId": "America/Los_Angeles", "aliases": []},
     {"name": "Buffalo", "country": "United States", "countryCode": "US", "timezoneId": "America/New_York", "aliases": []},
-    {"name": "Honolulu", "country": "United States", "countryCode": "US", "timezoneId": "Pacific/Honolulu", "aliases": ["Hawaii"]},
-
     {"name": "Regina", "country": "Canada", "countryCode": "CA", "timezoneId": "America/Regina", "aliases": []},
     {"name": "Saskatoon", "country": "Canada", "countryCode": "CA", "timezoneId": "America/Regina", "aliases": []},
     {"name": "Victoria", "country": "Canada", "countryCode": "CA", "timezoneId": "America/Vancouver", "aliases": []},
@@ -583,7 +570,6 @@
     {"name": "Erbil", "country": "Iraq", "countryCode": "IQ", "timezoneId": "Asia/Baghdad", "aliases": []},
     {"name": "Basra", "country": "Iraq", "countryCode": "IQ", "timezoneId": "Asia/Baghdad", "aliases": []},
 
-    {"name": "Mombasa", "country": "Kenya", "countryCode": "KE", "timezoneId": "Africa/Nairobi", "aliases": []},
     {"name": "Ibadan", "country": "Nigeria", "countryCode": "NG", "timezoneId": "Africa/Lagos", "aliases": []},
     {"name": "Kano", "country": "Nigeria", "countryCode": "NG", "timezoneId": "Africa/Lagos", "aliases": []},
     {"name": "Port Harcourt", "country": "Nigeria", "countryCode": "NG", "timezoneId": "Africa/Lagos", "aliases": []},
@@ -610,7 +596,6 @@
     {"name": "Dominica", "country": "Dominica", "countryCode": "DM", "timezoneId": "America/Dominica", "aliases": ["Roseau"]},
     {"name": "St. Vincent", "country": "Saint Vincent and the Grenadines", "countryCode": "VC", "timezoneId": "America/St_Vincent", "aliases": ["Kingstown"]},
 
-    {"name": "Siem Reap", "country": "Cambodia", "countryCode": "KH", "timezoneId": "Asia/Phnom_Penh", "aliases": []},
     {"name": "Luang Prabang", "country": "Laos", "countryCode": "LA", "timezoneId": "Asia/Vientiane", "aliases": []},
     {"name": "Mandalay", "country": "Myanmar", "countryCode": "MM", "timezoneId": "Asia/Yangon", "aliases": []},
     {"name": "Nha Trang", "country": "Vietnam", "countryCode": "VN", "timezoneId": "Asia/Ho_Chi_Minh", "aliases": []},
@@ -625,13 +610,10 @@
     {"name": "Santorini", "country": "Greece", "countryCode": "GR", "timezoneId": "Europe/Athens", "aliases": ["Thira"]},
     {"name": "Mykonos", "country": "Greece", "countryCode": "GR", "timezoneId": "Europe/Athens", "aliases": []},
     {"name": "Crete", "country": "Greece", "countryCode": "GR", "timezoneId": "Europe/Athens", "aliases": ["Heraklion"]},
-    {"name": "Porto", "country": "Portugal", "countryCode": "PT", "timezoneId": "Europe/Lisbon", "aliases": []},
     {"name": "Faro", "country": "Portugal", "countryCode": "PT", "timezoneId": "Europe/Lisbon", "aliases": ["Algarve"]},
     {"name": "Bodrum", "country": "Turkey", "countryCode": "TR", "timezoneId": "Europe/Istanbul", "aliases": []},
     {"name": "Cappadocia", "country": "Turkey", "countryCode": "TR", "timezoneId": "Europe/Istanbul", "aliases": ["Göreme"]},
     {"name": "Bruges", "country": "Belgium", "countryCode": "BE", "timezoneId": "Europe/Brussels", "aliases": ["Brugge"]},
     {"name": "Amalfi", "country": "Italy", "countryCode": "IT", "timezoneId": "Europe/Rome", "aliases": ["Amalfi Coast"]},
-    {"name": "Dubrovnik", "country": "Croatia", "countryCode": "HR", "timezoneId": "Europe/Zagreb", "aliases": []},
-    {"name": "Kotor", "country": "Montenegro", "countryCode": "ME", "timezoneId": "Europe/Podgorica", "aliases": []},
-    {"name": "Tallinn", "country": "Estonia", "countryCode": "EE", "timezoneId": "Europe/Tallinn", "aliases": []}
+    {"name": "Kotor", "country": "Montenegro", "countryCode": "ME", "timezoneId": "Europe/Podgorica", "aliases": []}
 ]

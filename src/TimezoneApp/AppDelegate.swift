@@ -20,6 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        viewModel.flushPendingPersistence()
         menubarRefreshTimer?.invalidate()
         menubarRefreshTimer = nil
     }

@@ -32,6 +32,7 @@
 		A10000030000000000000001 /* TimezoneApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TimezoneApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A100000A0000000000000001 /* TimezoneAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimezoneAppApp.swift; sourceTree = "<group>"; };
 		A100000B0000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A100000C0000000000000002 /* TimezoneApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TimezoneApp.entitlements; sourceTree = "<group>"; };
 		A10000150000000000000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A10000160000000000000001 /* City.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = City.swift; sourceTree = "<group>"; };
 		A10000170000000000000001 /* TimezoneGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimezoneGroup.swift; sourceTree = "<group>"; };
@@ -91,6 +92,7 @@
 				A10000150000000000000001 /* AppDelegate.swift */,
 				A100000A0000000000000001 /* TimezoneAppApp.swift */,
 				A100000B0000000000000001 /* Info.plist */,
+				A100000C0000000000000002 /* TimezoneApp.entitlements */,
 			);
 			path = TimezoneApp;
 			sourceTree = "<group>";
@@ -280,6 +282,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TimezoneApp/TimezoneApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XM37WDHL22;
@@ -305,6 +308,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TimezoneApp/TimezoneApp.entitlements;
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XM37WDHL22;

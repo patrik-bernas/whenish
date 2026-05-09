@@ -8,7 +8,7 @@ struct CitySearchResult: Identifiable, Equatable {
     let flag: String
     let aliases: [String]
 
-    var id: String { "\(cityName)-\(timeZoneIdentifier)" }
+    var id: String { "\(timeZoneIdentifier)|\(countryCode)|\(cityName)" }
 
     init(timeZoneIdentifier: String, cityName: String, countryName: String, countryCode: String, flag: String, aliases: [String] = []) {
         self.timeZoneIdentifier = timeZoneIdentifier
@@ -31,19 +31,13 @@ private struct CityEntry: Decodable {
 struct CitySearchService {
     /// Full dataset loaded once from cities.json + IANA fallbacks
     private let allCities: [CitySearchResult]
-    /// Keyed by timezone identifier for fast lookup (first match wins)
+    /// Keyed by timezone identifier for fast lookup
     private let byTimezone: [String: CitySearchResult]
 
     init() {
         let loaded = Self.loadCitiesJSON()
         self.allCities = loaded
-        var lookup: [String: CitySearchResult] = [:]
-        for city in loaded {
-            if lookup[city.timeZoneIdentifier] == nil {
-                lookup[city.timeZoneIdentifier] = city
-            }
-        }
-        self.byTimezone = lookup
+        self.byTimezone = Self.buildTimezoneLookup(from: loaded)
     }
 
     func search(query: String) -> [CitySearchResult] {
@@ -120,6 +114,55 @@ struct CitySearchService {
             }
             return lhs.cityName < rhs.cityName
         }
+    }
+
+    private static func buildTimezoneLookup(from cities: [CitySearchResult]) -> [String: CitySearchResult] {
+        var lookup: [String: CitySearchResult] = [:]
+
+        for city in cities {
+            guard let current = lookup[city.timeZoneIdentifier] else {
+                lookup[city.timeZoneIdentifier] = city
+                continue
+            }
+
+            if isBetterRepresentative(city, than: current) {
+                lookup[city.timeZoneIdentifier] = city
+            }
+        }
+
+        return lookup
+    }
+
+    private static func isBetterRepresentative(_ candidate: CitySearchResult, than current: CitySearchResult) -> Bool {
+        let timezoneCityName = normalizedTimezoneCityName(for: candidate.timeZoneIdentifier)
+        let candidateName = normalizedSearchTerm(candidate.cityName)
+        let currentName = normalizedSearchTerm(current.cityName)
+
+        if candidateName == timezoneCityName && currentName != timezoneCityName {
+            return true
+        }
+
+        if currentName == timezoneCityName {
+            return false
+        }
+
+        let candidateAliasMatches = candidate.aliases.contains { normalizedSearchTerm($0) == timezoneCityName }
+        let currentAliasMatches = current.aliases.contains { normalizedSearchTerm($0) == timezoneCityName }
+
+        return candidateAliasMatches && !currentAliasMatches
+    }
+
+    private static func normalizedTimezoneCityName(for identifier: String) -> String {
+        let cityComponent = identifier.split(separator: "/").last.map(String.init) ?? identifier
+        return normalizedSearchTerm(cityComponent.replacingOccurrences(of: "_", with: " "))
+    }
+
+    private static func normalizedSearchTerm(_ value: String) -> String {
+        value
+            .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "en_US_POSIX"))
+            .lowercased()
+            .replacingOccurrences(of: "[^a-z0-9]+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private func fallbackResult(for identifier: String) -> CitySearchResult {
